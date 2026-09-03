@@ -304,12 +304,6 @@ extern "C" __declspec(dllexport) void WINAPI gl_glColorMask(GLboolean r,
   static PFN_CM p = nullptr;
   if (!p)
     p = (PFN_CM)glproxy::resolve("glColorMask");
-  static thread_local unsigned int cur = 0xFFFFFFFFu;
-  unsigned int packed =
-      (r ? 1u : 0u) | (g ? 2u : 0u) | (b ? 4u : 0u) | (a ? 8u : 0u);
-  if (packed == cur)
-    return;
-  cur = packed;
   if (p)
     p(r, g, b, a);
 }
@@ -320,10 +314,6 @@ extern "C" __declspec(dllexport) void WINAPI gl_glCullFace(GLenum mode) {
   static PFN_CF p = nullptr;
   if (!p)
     p = (PFN_CF)glproxy::resolve("glCullFace");
-  static thread_local GLenum cur = 0xFFFFFFFFu;
-  if (mode == cur)
-    return;
-  cur = mode;
   if (p)
     p(mode);
 }
@@ -334,11 +324,6 @@ extern "C" __declspec(dllexport) void WINAPI gl_glDepthMask(GLboolean flag) {
   static PFN_DM p = nullptr;
   if (!p)
     p = (PFN_DM)glproxy::resolve("glDepthMask");
-  static thread_local int cur = -1; // -1 = unknown
-  int v = flag ? 1 : 0;
-  if (v == cur)
-    return;
-  cur = v;
   if (p)
     p(flag);
 }
@@ -495,10 +480,6 @@ extern "C" __declspec(dllexport) void WINAPI gl_glFrontFace(GLenum mode) {
   static PFN_FF p = nullptr;
   if (!p)
     p = (PFN_FF)glproxy::resolve("glFrontFace");
-  static thread_local GLenum cur = 0xFFFFFFFFu;
-  if (mode == cur)
-    return;
-  cur = mode;
   if (p)
     p(mode);
 }
@@ -715,18 +696,10 @@ extern "C" __declspec(dllexport) void WINAPI gl_glScissor(GLint x, GLint y,
   static PFN_SC p = nullptr;
   if (!p)
     p = (PFN_SC)glproxy::resolve("glScissor");
-  static thread_local GLint cx = -1, cy = -1;
-  static thread_local GLsizei cw = -1, ch = -1;
-  if (x == cx && y == cy && w == cw && h == ch)
-    return;
-  cx = x;
-  cy = y;
-  cw = w;
-  ch = h;
   if (p)
     p(x, y, w, h);
 }
-// glStencilFunc dedup.
+// glStencilFunc
 typedef void(WINAPI *PFN_SF)(GLenum, GLint, GLuint);
 extern "C" __declspec(dllexport) void WINAPI gl_glStencilFunc(GLenum func,
                                                               GLint ref,
@@ -734,60 +707,36 @@ extern "C" __declspec(dllexport) void WINAPI gl_glStencilFunc(GLenum func,
   static PFN_SF p = nullptr;
   if (!p)
     p = (PFN_SF)glproxy::resolve("glStencilFunc");
-  static thread_local GLenum cfn = 0xFFFFFFFFu;
-  static thread_local GLint cref = -1;
-  static thread_local GLuint cm = 0xFFFFFFFFu;
-  if (func == cfn && ref == cref && mask == cm)
-    return;
-  cfn = func;
-  cref = ref;
-  cm = mask;
   if (p)
     p(func, ref, mask);
 }
-// glStencilMask dedup.
+// glStencilMask
 typedef void(WINAPI *PFN_SM)(GLuint);
 extern "C" __declspec(dllexport) void WINAPI gl_glStencilMask(GLuint mask) {
   static PFN_SM p = nullptr;
   if (!p)
     p = (PFN_SM)glproxy::resolve("glStencilMask");
-  static thread_local GLuint cur = 0xFFFFFFFFu;
-  if (mask == cur)
-    return;
-  cur = mask;
   if (p)
     p(mask);
 }
-// glStencilOp dedup.
+// glStencilOp
 typedef void(WINAPI *PFN_SO)(GLenum, GLenum, GLenum);
 extern "C" __declspec(dllexport) void WINAPI gl_glStencilOp(GLenum f, GLenum zf,
                                                             GLenum zp) {
   static PFN_SO p = nullptr;
   if (!p)
     p = (PFN_SO)glproxy::resolve("glStencilOp");
-  static thread_local GLenum c0 = 0xFFFFFFFFu, c1 = 0xFFFFFFFFu,
-                             c2 = 0xFFFFFFFFu;
-  if (f == c0 && zf == c1 && zp == c2)
-    return;
-  c0 = f;
-  c1 = zf;
-  c2 = zp;
   if (p)
     p(f, zf, zp);
 }
 // glViewport defined above with diagnostic logging
-// Blend state dedup - cocos2d sets same blend mode across many batched sprites
+// Blend state
 typedef void(WINAPI *PFN_BF)(GLenum, GLenum);
 extern "C" __declspec(dllexport) void WINAPI gl_glBlendFunc(GLenum s,
                                                             GLenum d) {
   static PFN_BF p = nullptr;
   if (!p)
     p = (PFN_BF)glproxy::resolve("glBlendFunc");
-  static thread_local GLenum cs = 0xFFFFFFFFu, cd = 0xFFFFFFFFu;
-  if (s == cs && d == cd)
-    return;
-  cs = s;
-  cd = d;
   if (p)
     p(s, d);
 }
@@ -796,10 +745,6 @@ extern "C" __declspec(dllexport) void WINAPI gl_glBlendEquation(GLenum mode) {
   static PFN_BE p = nullptr;
   if (!p)
     p = (PFN_BE)glproxy::resolve("glBlendEquation");
-  static thread_local GLenum cur = 0xFFFFFFFFu;
-  if (mode == cur)
-    return;
-  cur = mode;
   if (p)
     p(mode);
 }
@@ -811,42 +756,26 @@ extern "C" __declspec(dllexport) void WINAPI gl_glBlendFuncSeparate(GLenum ss,
   static PFN_BFS p = nullptr;
   if (!p)
     p = (PFN_BFS)glproxy::resolve("glBlendFuncSeparate");
-  static thread_local GLenum c0 = 0xFFFFFFFFu, c1 = 0xFFFFFFFFu,
-                             c2 = 0xFFFFFFFFu, c3 = 0xFFFFFFFFu;
-  if (ss == c0 && ds == c1 && sa == c2 && da == c3)
-    return;
-  c0 = ss;
-  c1 = ds;
-  c2 = sa;
-  c3 = da;
   if (p)
     p(ss, ds, sa, da);
 }
-// glDepthFunc dedup.
+// glDepthFunc
 typedef void(WINAPI *PFN_DF)(GLenum);
 extern "C" __declspec(dllexport) void WINAPI gl_glDepthFunc(GLenum func) {
   static PFN_DF p = nullptr;
   if (!p)
     p = (PFN_DF)glproxy::resolve("glDepthFunc");
-  static thread_local GLenum cur = 0xFFFFFFFFu;
-  if (func == cur)
-    return;
-  cur = func;
   if (p)
     p(func);
 }
 
-// textures - with state dedup (skip redundant calls, reduces driver overhead)
+// textures
 typedef void(WINAPI *PFN_AT)(GLenum);
 typedef void(WINAPI *PFN_BT)(GLenum, GLuint);
 extern "C" __declspec(dllexport) void WINAPI gl_glActiveTexture(GLenum tex) {
   static PFN_AT p = nullptr;
   if (!p)
     p = (PFN_AT)glproxy::resolve("glActiveTexture");
-  static thread_local GLenum cur = 0xFFFFFFFFu;
-  if (tex == cur)
-    return;
-  cur = tex;
   if (p)
     p(tex);
 }
@@ -855,22 +784,6 @@ extern "C" __declspec(dllexport) void WINAPI gl_glBindTexture(GLenum target,
   static PFN_BT p = nullptr;
   if (!p)
     p = (PFN_BT)glproxy::resolve("glBindTexture");
-  // track per-texture-unit, per-target
-  constexpr int MAX_UNITS = 32;
-  static thread_local GLuint bound2D[MAX_UNITS] = {};
-  static thread_local GLuint boundCube[MAX_UNITS] = {};
-  static thread_local GLenum tu = 0x84C0; // GL_TEXTURE0
-  // (We can't see glActiveTexture state from here - track via separate path is
-  // hard. For 2D-only games like GD, this dedup is still effective at unit 0.)
-  if (target == 0x0DE1 /*GL_TEXTURE_2D*/) {
-    if (bound2D[0] == tex)
-      return;
-    bound2D[0] = tex;
-  } else if (target == 0x8513 /*GL_TEXTURE_CUBE_MAP*/) {
-    if (boundCube[0] == tex)
-      return;
-    boundCube[0] = tex;
-  }
   if (p)
     p(target, tex);
 }
