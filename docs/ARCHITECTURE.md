@@ -53,7 +53,7 @@ Plus, the proxy has 80+ side-modules (`boost_*.cpp`) that hook into Win32 / D3D1
    - Non-GL-dependent boost modules (e.g. `boost_nvapi`) run here.
 3. **GD calls `wglCreateContext`** → routed to our `wgl_glCreateContext`:
    - We create an EGL context via ANGLE.
-   - We call `boost_frame_pacing::apply()`, `boost_allow_tearing::apply()`, `boost_low_latency::apply()`, etc. — these modules need a live D3D11 device.
+   - We call `boost_frame_pacing::apply()`, `boost_allow_tearing::apply()`, `boost_low_latency::apply()`, etc. - these modules need a live D3D11 device.
 4. **GD calls `wglMakeCurrent`** → we call `eglMakeCurrent`. After success, GL is fully ready.
 5. From here on, every GL call from GD goes through our proxy (`gl_glDrawArrays`, `gl_glBindTexture`, etc.) → dedup logic → forward to ANGLE.
 
@@ -61,8 +61,8 @@ Plus, the proxy has 80+ side-modules (`boost_*.cpp`) that hook into Win32 / D3D1
 
 cocos2d-x re-sets identical render state on every sprite. Our proxy intercepts state-change calls and skips them when the new value matches the current one. Storage:
 
-- **Per-thread** (`thread_local`) — most state is per-context, contexts are bound to threads.
-- **Direct-mapped hash cache** for uniforms — keyed by `(program, location)`, 32 entries × small payload. Lock-free, no allocations.
+- **Per-thread** (`thread_local`) - most state is per-context, contexts are bound to threads.
+- **Direct-mapped hash cache** for uniforms - keyed by `(program, location)`, 32 entries × small payload. Lock-free, no allocations.
 - **Bitmask** for boolean state (e.g. `glEnableVertexAttribArray`).
 
 ### Coverage matrix
@@ -118,20 +118,20 @@ For 1000 sprites in a frame using the same atlas + same shader + same color, tha
 
 1. After every frame, compute `elapsed_since_last_present`.
 2. If `elapsed < target_dt`:
-   - Phase 1: block on a high-resolution waitable timer (`CreateWaitableTimerExW(HIGH_RESOLUTION)`) for the bulk of the wait — **0 % CPU**, ~100 µs precision.
+   - Phase 1: block on a high-resolution waitable timer (`CreateWaitableTimerExW(HIGH_RESOLUTION)`) for the bulk of the wait - **0 % CPU**, ~100 µs precision.
    - Phase 2: tight `YieldProcessor` spin for the last ~200 µs to hit sub-100 µs precision.
-3. Anchor `last_present` to the ideal tick — long-term FPS stays exact, no cumulative drift.
+3. Anchor `last_present` to the ideal tick - long-term FPS stays exact, no cumulative drift.
 4. If frame already exceeded target (GPU/CPU bound), anchor to `now` to avoid negative drift.
 
-The high-res timer is **the** key win on 2-core CPUs — the previous Sleep+spin approach burned a whole core busy-waiting, which directly competed with cocos2d's main thread.
+The high-res timer is **the** key win on 2-core CPUs - the previous Sleep+spin approach burned a whole core busy-waiting, which directly competed with cocos2d's main thread.
 
-## NVAPI DRS — what we set
+## NVAPI DRS - what we set
 
 `boost_nvapi.cpp` opens an NVAPI DRS session, finds (or falls back to global profile), and sets:
 
 | Setting | Value | Why |
 |---------|-------|-----|
-| `PREFERRED_PSTATE` | `PREFER_MAX` (P0) | Pin GPU at max clock — no idle ramp-up jitter |
+| `PREFERRED_PSTATE` | `PREFER_MAX` (P0) | Pin GPU at max clock - no idle ramp-up jitter |
 | `POWER_MIZER_LEVEL_AC` | `MAX_PERF` | Driver power policy = max |
 | `VSYNC_MODE` | `FORCE_OFF` | Driver-level vsync killed |
 | `OGL_THREADED_OPTIMIZATION` | `ENABLE` | Driver multi-threaded submission |
@@ -142,7 +142,7 @@ These persist in the user's Nvidia profile DB.
 ## Memory & threading model
 
 - All boost modules are **single-threaded**, applied during DLL init or postGLInit.
-- All hot-path caches (state, uniforms) are `thread_local` — no contention.
+- All hot-path caches (state, uniforms) are `thread_local` - no contention.
 - No exceptions thrown anywhere on the GL hot path.
 - No heap allocations on the GL hot path (caches are statically sized).
 - No virtual calls on the GL hot path.

@@ -1,6 +1,6 @@
 # `angle_config.ini` reference
 
-The full reference of every option in `angle_config.ini`. For interactive editing, run `gd-angle-editor.exe` — it has the same info as a UI with bilingual descriptions.
+The full reference of every option in `angle_config.ini`. For interactive editing, run `gd-angle-editor.exe` - it has the same info as a UI with bilingual descriptions.
 
 > **Note**: The shipped `angle_config.ini` already has full bilingual comments inline. This document is a flat summary for browsing.
 
@@ -16,13 +16,13 @@ The full reference of every option in `angle_config.ini`. For interactive editin
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| `gpu_forcer` | bool | `true` | `NvOptimusEnablement = 1` export — Optimus laptops use dGPU instead of iGPU. |
+| `gpu_forcer` | bool | `true` | `NvOptimusEnablement = 1` export - Optimus laptops use dGPU instead of iGPU. |
 | `fast_allocator` | bool | `true` | `HeapSetInformation` to enable LFH on process heap. |
 | `timer_fix` | bool | `true` | `timeBeginPeriod(1)` for 1 ms scheduler granularity. |
 | `thread_boost` | bool | `true` | `SetThreadPriority(THREAD_PRIORITY_ABOVE_NORMAL)`. |
 | `cpu_affinity` | hex | `0` | If non-zero, pin GD to specific cores. `0xC` = cores 2-3. `0` = all. |
 | `sse_math` | bool | `true` | Set FPU rounding to truncate (faster int conversions). |
-| `power_boost` | bool | `true` | `PROCESS_POWER_THROTTLING_EXECUTION_SPEED=0` — disable Win10 EcoQoS throttle. |
+| `power_boost` | bool | `true` | `PROCESS_POWER_THROTTLING_EXECUTION_SPEED=0` - disable Win10 EcoQoS throttle. |
 
 ## Section: `[BoostAdvanced]`
 
@@ -33,13 +33,13 @@ The full reference of every option in `angle_config.ini`. For interactive editin
 | `shader_cache` | bool | `true` | Disk-cache compiled shaders. |
 | `shader_cache_dir` | string | `shader_cache` | Where to put cache files. |
 | `large_address_aware` | bool | `true` | Set LAA flag on running process via PE patching. |
-| `gl_state_dedup` | bool | `true` | (Legacy module — actual dedup is in `gl_proxy.cpp`, this flag mostly cosmetic.) |
+| `gl_state_dedup` | bool | `true` | (Legacy module - actual dedup is in `gl_proxy.cpp`, this flag mostly cosmetic.) |
 | `working_set_prefetch` | bool | `false` | Prefault GD's code pages. **Causes init stalls** on test hardware. |
 | `fmod_tuning` | bool | `false` | FMOD audio tuning. **IAT hook on FMOD** can crash. |
 | `fmod_sample_rate` | int | `44100` | FMOD sample rate when `fmod_tuning=true`. |
 | `async_asset_loader` | bool | `false` | Parallel asset loader. **2-core CPUs** see no benefit. |
 | `async_loader_threads` | int | `4` | Worker count when `async_asset_loader=true`. |
-| `force_no_vsync` | bool | `true` | `eglSwapInterval(0)` — disable vsync at EGL level. |
+| `force_no_vsync` | bool | `true` | `eglSwapInterval(0)` - disable vsync at EGL level. |
 | `precise_sleep` | bool | `true` | High-resolution `Sleep` patch via `NtSetTimerResolution`. |
 | `heap_compact_interval` | int | `30` | Heap-compaction interval in seconds. |
 | `d3d11_multithread` | bool | `false` | D3D11 multithread protection. **Conflicts** with ANGLE's own threading. |
@@ -95,10 +95,10 @@ The full reference of every option in `angle_config.ini`. For interactive editin
 | `waitable_swap` | bool | `true` | Use `WaitForSingleObjectEx` instead of blocking Present. |
 | `frame_pacing` | bool | `true` | High-res-timer frame pacer. **Best feel preset**. |
 | `frame_pacing_target` | int | `120` | FPS cap. **Set BELOW your worst-case FPS during effects** for max smoothness. `0` = auto-detect monitor refresh. |
-| `mmcss_pro_audio` | bool | `true` | MMCSS Pro Audio class — 1 ms scheduling. |
+| `mmcss_pro_audio` | bool | `true` | MMCSS Pro Audio class - 1 ms scheduling. |
 | `shader_warmup` | bool | `false` | Pre-compile linked programs at startup via `glValidateProgram` to force ANGLE D3D11 deferred HLSL JIT. Reduces first-use shader stutter. |
-| `low_latency` | bool | `true` | `IDXGIDevice1::SetMaximumFrameLatency(1)` — input lag −33 ms at 60 FPS. |
-| `gl_no_error` | bool | `true` | `EGL_CONTEXT_OPENGL_NO_ERROR_KHR` — kills per-call ANGLE validation. |
+| `low_latency` | bool | `true` | `IDXGIDevice1::SetMaximumFrameLatency(1)` - input lag −33 ms at 60 FPS. |
+| `gl_no_error` | bool | `true` | `EGL_CONTEXT_OPENGL_NO_ERROR_KHR` - kills per-call ANGLE validation. |
 | `unlock_fps_cap` | bool | `true` | Hook `CCApplication::setAnimationInterval` to remove cocos2d 60 FPS cap. |
 | `anti_stutter` | bool | `true` | Disable affinity auto-update + EcoQoS thread throttling. |
 
@@ -126,7 +126,7 @@ The full reference of every option in `angle_config.ini`. For interactive editin
 | `fbo_cache` | bool | `false` | FBO pool. **Jitter source** (RT-switch complexity). |
 | `fbo_pool_size` | int | `8` | FBO pool size. |
 | `triple_buffer` | bool | `false` | Triple buffering. **ANGLE ignores** the hint, +1 frame lag. |
-| `disable_aa` | bool | `true` | `glDisable(GL_MULTISAMPLE)` — huge win on weak GPUs. |
+| `disable_aa` | bool | `true` | `glDisable(GL_MULTISAMPLE)` - huge win on weak GPUs. |
 | `blend_optimize` | bool | `false` | Blend mode optimizer. **Breaks fade transitions**. |
 
 ## Section: `[BoostCocos]`

@@ -168,7 +168,7 @@ extern "C" __declspec(dllexport) void WINAPI gl_glClearStencil(GLint s) {
     p(s);
 }
 
-// Legacy GL 1.1 glClearDepth takes double — ANGLE only has glClearDepthf
+// Legacy GL 1.1 glClearDepth takes double - ANGLE only has glClearDepthf
 // (float). Convert and forward.
 typedef void(WINAPI *PFNGLCLEARDEPTHF)(GLfloat);
 extern "C" __declspec(dllexport) void WINAPI gl_glClearDepth(GLdouble d) {
@@ -179,7 +179,7 @@ extern "C" __declspec(dllexport) void WINAPI gl_glClearDepth(GLdouble d) {
     p((GLfloat)d);
 }
 
-// Legacy GL 1.1 glDepthRange takes double pair — ANGLE has glDepthRangef.
+// Legacy GL 1.1 glDepthRange takes double pair - ANGLE has glDepthRangef.
 // Both share the same dedup state.
 static thread_local GLfloat g_depthRangeN = -1.0f, g_depthRangeF = -1.0f;
 typedef void(WINAPI *PFNGLDEPTHRANGEF)(GLfloat, GLfloat);
@@ -209,7 +209,7 @@ extern "C" __declspec(dllexport) void WINAPI gl_glDepthRangef(GLfloat n,
   if (p)
     p(n, f);
 }
-// glSampleCoverage dedup — rarely changes but GD's MSAA path can hammer it.
+// glSampleCoverage dedup - rarely changes but GD's MSAA path can hammer it.
 typedef void(WINAPI *PFN_SAMPCOV)(GLfloat, GLboolean);
 extern "C" __declspec(dllexport) void WINAPI
 gl_glSampleCoverage(GLfloat value, GLboolean invert) {
@@ -228,7 +228,7 @@ gl_glSampleCoverage(GLfloat value, GLboolean invert) {
 // ===== State dedup sweep =====
 // cocos2d-x re-sets identical render state every sprite. On hard levels with
 // 1000+ visible objects, ~30-50% of GL calls are redundant. Dedup removes
-// driver-side validation cost — measurable 10-20% CPU win on 2-core systems.
+// driver-side validation cost - measurable 10-20% CPU win on 2-core systems.
 
 // glEnable / glDisable cap dedup. Maps known caps to a 32-bit bitmask;
 // unknown caps fall through unchanged.
@@ -295,7 +295,7 @@ extern "C" __declspec(dllexport) void WINAPI gl_glDisable(GLenum cap) {
     p(cap);
 }
 
-// glColorMask — 4 booleans packed into one nibble.
+// glColorMask - 4 booleans packed into one nibble.
 typedef void(WINAPI *PFN_CM)(GLboolean, GLboolean, GLboolean, GLboolean);
 extern "C" __declspec(dllexport) void WINAPI gl_glColorMask(GLboolean r,
                                                             GLboolean g,
@@ -314,7 +314,7 @@ extern "C" __declspec(dllexport) void WINAPI gl_glColorMask(GLboolean r,
     p(r, g, b, a);
 }
 
-// glCullFace — single GLenum.
+// glCullFace - single GLenum.
 typedef void(WINAPI *PFN_CF)(GLenum);
 extern "C" __declspec(dllexport) void WINAPI gl_glCullFace(GLenum mode) {
   static PFN_CF p = nullptr;
@@ -328,7 +328,7 @@ extern "C" __declspec(dllexport) void WINAPI gl_glCullFace(GLenum mode) {
     p(mode);
 }
 
-// glDepthMask — single boolean.
+// glDepthMask - single boolean.
 typedef void(WINAPI *PFN_DM)(GLboolean);
 extern "C" __declspec(dllexport) void WINAPI gl_glDepthMask(GLboolean flag) {
   static PFN_DM p = nullptr;
@@ -354,14 +354,14 @@ extern "C" unsigned long long gdangle_getDrawElementsCount() {
 
 typedef void(WINAPI *PFN_DA)(GLenum, GLint, GLsizei);
 extern "C" void gdangle_markDirty();
-// Defined in gl_proxy_ext.cpp — returns false when the currently bound
+// Defined in gl_proxy_ext.cpp - returns false when the currently bound
 // program has GL_LINK_STATUS=0 (silicate's shaders using desktop-only
 // `layout(location=N) uniform` syntax that ESSL3 rejects).
 extern "C" bool gdangle_currentProgramOK();
 
 // SEH filter for ANGLE crashes. Some Geode mods (peony.silicate) drive
 // ANGLE through code paths that hit `ud2` (UNREACHABLE) deep in libGLESv2's
-// D3D11 stream translator — typically caused by client-side vertex arrays,
+// D3D11 stream translator - typically caused by client-side vertex arrays,
 // invalid index types, or vertex format mismatches that ANGLE's renderer
 // can't translate to a D3D11 input layout. The crash is c000001d
 // EXCEPTION_ILLEGAL_INSTRUCTION; on desktop GL the same operation would
@@ -446,11 +446,11 @@ gl_glDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid *ind) {
   }
 }
 
-// glDrawElementsBaseVertex — GL 3.2+ desktop only, NOT in OpenGL ES.
+// glDrawElementsBaseVertex - GL 3.2+ desktop only, NOT in OpenGL ES.
 // Eclipse Menu's GLEW caches this as NULL via wglGetProcAddress ->
 // ImGui+cocos2d path crashes (DEP exec at 0x0). Provide stub: forward to
 // glDrawElements. Correct when basevertex==0 (cocos2d's draw_triangle case).
-// For non-zero basevertex, geometry would be offset incorrectly — preferable to
+// For non-zero basevertex, geometry would be offset incorrectly - preferable to
 // a crash.
 extern "C" __declspec(dllexport) void WINAPI
 gl_glDrawElementsBaseVertex(GLenum mode, GLsizei count, GLenum type,
@@ -469,7 +469,7 @@ gl_glDrawElementsBaseVertex(GLenum mode, GLsizei count, GLenum type,
     gd_logAngleCrash("glDrawElementsBaseVertex", GetExceptionCode());
   }
 }
-// glPrimitiveRestartIndex / glProvokingVertex — GL 3.x desktop, no-op in GLES
+// glPrimitiveRestartIndex / glProvokingVertex - GL 3.x desktop, no-op in GLES
 // context.
 extern "C" __declspec(dllexport) void WINAPI
 gl_glPrimitiveRestartIndex(GLuint /*index*/) { /* no-op */ }
@@ -514,7 +514,7 @@ extern "C" __declspec(dllexport) GLenum WINAPI gl_glGetError(void) {
     p = (PFN_GE)glproxy::resolve("glGetError");
   return p ? p() : 0;
 }
-// glPolygonMode: NOT in OpenGL ES — but ImGui/Eclipse on desktop call it.
+// glPolygonMode: NOT in OpenGL ES - but ImGui/Eclipse on desktop call it.
 // Without this stub, Eclipse's ImGui caches NULL function pointer at backend
 // init, then crashes (DEP exec at 0x0) when drawing. GLES is implicitly always
 // GL_FILL.
@@ -553,7 +553,7 @@ gl_glGetString(GLenum name) {
   // GL_EXTENSIONS=0x1F03, GL_SHADING_LANGUAGE_VERSION=0x8B8C
   switch (name) {
   case 0x1F02: // GL_VERSION
-    // Keep "2.1.0 " prefix — cocos2d parses leading "X.Y" floats.
+    // Keep "2.1.0 " prefix - cocos2d parses leading "X.Y" floats.
     return (const GLubyte *)"2.1.0 ReviANGLE";
   case 0x8B8C: // GL_SHADING_LANGUAGE_VERSION
     return (const GLubyte *)"1.20";
@@ -646,7 +646,7 @@ gl_glGetStringi(GLenum name, GLuint index) {
   return p ? p(name, index) : (const GLubyte *)"";
 }
 
-// glHint dedup — small fixed set of targets. Most calls in GD set the same.
+// glHint dedup - small fixed set of targets. Most calls in GD set the same.
 typedef void(WINAPI *PFN_HT)(GLenum, GLenum);
 extern "C" __declspec(dllexport) void WINAPI gl_glHint(GLenum target,
                                                        GLenum mode) {
@@ -654,7 +654,7 @@ extern "C" __declspec(dllexport) void WINAPI gl_glHint(GLenum target,
   if (!p)
     p = (PFN_HT)glproxy::resolve("glHint");
   // Use lower 8 bits of target as direct-mapped slot. Collisions just
-  // redo the call — still correct.
+  // redo the call - still correct.
   thread_local GLenum modes[256] = {};
   thread_local GLenum tgts[256] = {};
   unsigned slot = target & 0xFF;
@@ -679,9 +679,9 @@ extern "C" __declspec(dllexport) void WINAPI gl_glLineWidth(GLfloat w) {
   if (p)
     p(w);
 }
-// glPixelStorei dedup — cocos2d sets GL_UNPACK_ALIGNMENT to 1 or 4 every
+// glPixelStorei dedup - cocos2d sets GL_UNPACK_ALIGNMENT to 1 or 4 every
 // texture upload. Direct-mapped 64-slot table by `pname & 0x3F` (collisions
-// just redo the call — still correct).
+// just redo the call - still correct).
 typedef void(WINAPI *PFN_PSI)(GLenum, GLint);
 extern "C" __declspec(dllexport) void WINAPI gl_glPixelStorei(GLenum pname,
                                                               GLint param) {
@@ -783,7 +783,7 @@ extern "C" __declspec(dllexport) void WINAPI gl_glStencilOp(GLenum f, GLenum zf,
     p(f, zf, zp);
 }
 // glViewport defined above with diagnostic logging
-// Blend state dedup — cocos2d sets same blend mode across many batched sprites
+// Blend state dedup - cocos2d sets same blend mode across many batched sprites
 typedef void(WINAPI *PFN_BF)(GLenum, GLenum);
 extern "C" __declspec(dllexport) void WINAPI gl_glBlendFunc(GLenum s,
                                                             GLenum d) {
@@ -843,7 +843,7 @@ extern "C" __declspec(dllexport) void WINAPI gl_glDepthFunc(GLenum func) {
     p(func);
 }
 
-// textures — with state dedup (skip redundant calls, reduces driver overhead)
+// textures - with state dedup (skip redundant calls, reduces driver overhead)
 typedef void(WINAPI *PFN_AT)(GLenum);
 typedef void(WINAPI *PFN_BT)(GLenum, GLuint);
 extern "C" __declspec(dllexport) void WINAPI gl_glActiveTexture(GLenum tex) {
@@ -867,7 +867,7 @@ extern "C" __declspec(dllexport) void WINAPI gl_glBindTexture(GLenum target,
   static thread_local GLuint bound2D[MAX_UNITS] = {};
   static thread_local GLuint boundCube[MAX_UNITS] = {};
   static thread_local GLenum tu = 0x84C0; // GL_TEXTURE0
-  // (We can't see glActiveTexture state from here — track via separate path is
+  // (We can't see glActiveTexture state from here - track via separate path is
   // hard. For 2D-only games like GD, this dedup is still effective at unit 0.)
   if (target == 0x0DE1 /*GL_TEXTURE_2D*/) {
     if (bound2D[0] == tex)
@@ -891,7 +891,7 @@ GLP_FORWARD_VOID(glTexSubImage2D,
                  (GLenum t, GLint l, GLint x, GLint y, GLsizei w, GLsizei h,
                   GLenum f, GLenum type, const GLvoid *px),
                  (t, l, x, y, w, h, f, type, px))
-// glTexParameteri — when mipmap_off is set, downgrade mipmap filters to
+// glTexParameteri - when mipmap_off is set, downgrade mipmap filters to
 // non-mipmap. Saves GPU bandwidth on Kepler/Fermi: each sample no longer reads
 // from mip chain.
 typedef void(WINAPI *PFN_TPI)(GLenum, GLenum, GLint);
@@ -923,7 +923,7 @@ GLP_FORWARD_VOID(glCompressedTexImage2D,
                  (GLenum t, GLint l, GLenum ifmt, GLsizei w, GLsizei h, GLint b,
                   GLsizei sz, const GLvoid *d),
                  (t, l, ifmt, w, h, b, sz, d))
-// glGenerateMipmap — skip entirely when mipmap_off (save startup time + VRAM)
+// glGenerateMipmap - skip entirely when mipmap_off (save startup time + VRAM)
 typedef void(WINAPI *PFN_GMM)(GLenum);
 extern "C" __declspec(dllexport) void WINAPI gl_glGenerateMipmap(GLenum t) {
   static PFN_GMM fn = nullptr;

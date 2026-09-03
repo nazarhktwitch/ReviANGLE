@@ -9,7 +9,6 @@
 #include <cstddef>
 #include <windows.h>
 
-
 // GL types
 typedef unsigned int GLenum;
 typedef unsigned int GLbitfield;
@@ -65,7 +64,7 @@ void *resolve(const char *name);
 // Read/Draw buffers
 GLP_EXT_FORWARD_VOID(ReadBuffer, (GLenum src), (src))
 
-// glDrawBuffers — instrumented to track draw-buffer disabling by mods
+// glDrawBuffers - instrumented to track draw-buffer disabling by mods
 // (MegaHack). When a mod disables draw buffers on the default framebuffer, all
 // subsequent game draws produce no color output → black screen until scene
 // re-init.
@@ -104,7 +103,7 @@ extern "C" __declspec(dllexport) void WINAPI gl_glDrawBuffer(GLenum mode) {
   static int dn = 0;
   if (dn < 60) {
     angle::forceLog("glDrawBuffer #%d: mode=0x%04X %s%s", dn, mode,
-                    mode == 0 ? "(GL_NONE — DISABLES COLOR OUTPUT!)" : "",
+                    mode == 0 ? "(GL_NONE - DISABLES COLOR OUTPUT!)" : "",
                     Config::get().megahack_detected ? " [MEGAHACK]" : "");
     dn++;
   }
@@ -112,16 +111,16 @@ extern "C" __declspec(dllexport) void WINAPI gl_glDrawBuffer(GLenum mode) {
     p(1, &mode);
 }
 
-// glBindSampler — GLES 3.0 sampler-object binding. Direct forward.
+// glBindSampler - GLES 3.0 sampler-object binding. Direct forward.
 GLP_EXT_FORWARD_VOID(BindSampler, (GLuint unit, GLuint sampler),
                      (unit, sampler))
 
-// glBlendEquationSeparate — GLES 2.0+, separate RGB / A equations. Direct
+// glBlendEquationSeparate - GLES 2.0+, separate RGB / A equations. Direct
 // forward.
 GLP_EXT_FORWARD_VOID(BlendEquationSeparate, (GLenum modeRGB, GLenum modeAlpha),
                      (modeRGB, modeAlpha))
 
-// Vertex-attrib query getters — GLES 2.0+, direct forward.
+// Vertex-attrib query getters - GLES 2.0+, direct forward.
 GLP_EXT_FORWARD_VOID(GetVertexAttribiv,
                      (GLuint index, GLenum pname, GLint *params),
                      (index, pname, params))
@@ -179,11 +178,11 @@ GLP_EXT_FORWARD_VOID(GetTexParameterfv,
 // Buffers
 GLP_EXT_FORWARD_VOID(GenBuffers, (GLsizei n, GLuint *buffers), (n, buffers))
 
-// glBindBuffer dedup — cocos2d binds the same VBO/IBO on every sprite draw.
+// glBindBuffer dedup - cocos2d binds the same VBO/IBO on every sprite draw.
 // Track per-target last-bound buffer; unknown targets fall through.
 //
 // File-scope so glBufferData / glBufferSubData can also query "is anything
-// bound to this target?" — ANGLE crashes if the answer is no, desktop-GL
+// bound to this target?" - ANGLE crashes if the answer is no, desktop-GL
 // silently no-ops (some Geode mods rely on the silent behaviour).
 static int s_bufTargetSlot(GLenum target) {
   switch (target) {
@@ -216,7 +215,7 @@ thread_local GLuint g_bufferBindings[8] = {
 static inline bool gd_noBufferBound(GLenum target) {
   int slot = s_bufTargetSlot(target);
   if (slot < 0)
-    return false; // unknown target — let ANGLE handle
+    return false; // unknown target - let ANGLE handle
   GLuint b = g_bufferBindings[slot];
   return b == 0 || b == 0xFFFFFFFFu;
 }
@@ -240,7 +239,7 @@ extern "C" __declspec(dllexport) void WINAPI gl_glBindBuffer(GLenum target,
   if (p)
     p(target, buffer);
 }
-// glBufferData / glBufferSubData — desktop-GL parity guard: no-op when no
+// glBufferData / glBufferSubData - desktop-GL parity guard: no-op when no
 // buffer is bound to the target (ANGLE crashes deep in libGLESv2 otherwise).
 typedef void(WINAPI *PFN_BD)(GLenum, GLsizeiptr, const void *, GLenum);
 extern "C" __declspec(dllexport) void WINAPI gl_glBufferData(GLenum target,
@@ -327,7 +326,7 @@ GLP_EXT_FORWARD_VOID(DeleteVertexArrays, (GLsizei n, const GLuint *arrays),
                      (n, arrays))
 GLP_EXT_FORWARD(GLboolean, IsVertexArray, (GLuint array), (array))
 
-// Shaders — track type per ID for source patching
+// Shaders - track type per ID for source patching
 #include <array>
 #include <cstring>
 #include <mutex>
@@ -340,7 +339,7 @@ static std::mutex g_shaderTypeMtx;
 
 // Link-status tracking. ANGLE crashes (__fastfail / illegal instruction
 // inside libGLESv2's stream-translator) when glDrawArrays / glDrawElements
-// is called with a non-linked program currently bound — this is desktop-GL
+// is called with a non-linked program currently bound - this is desktop-GL
 // "tolerated, draws nothing" vs ANGLE "fastfail and take down the game".
 //
 // peony.silicate ships shaders with desktop-only #extension directives
@@ -348,7 +347,7 @@ static std::mutex g_shaderTypeMtx;
 // even after our shader translator strips those, the underlying
 // `layout(location=N) uniform` syntax still fails in ESSL3, so the
 // program never links. Silicate then proceeds to use the broken program
-// for drawing — desktop-GL would just produce nothing, ANGLE crashes.
+// for drawing - desktop-GL would just produce nothing, ANGLE crashes.
 //
 // Track each program's last-known link status. gl_glDrawArrays /
 // glDrawElements consult this map (via gdangle_currentProgramOK) and
@@ -574,7 +573,7 @@ gl_glShaderSource(GLuint shader, GLsizei count, const GLchar *const *string,
   std::string patched;
 
   if (versionPos == std::string::npos) {
-    // Case 1: no #version — legacy cocos2d-x style. Prepend ES 1.00 +
+    // Case 1: no #version - legacy cocos2d-x style. Prepend ES 1.00 +
     // precision, then the original source as-is.
     std::string prefix = "#version 100\n";
     if (isFragment)
@@ -603,13 +602,13 @@ gl_glShaderSource(GLuint shader, GLsizei count, const GLchar *const *string,
     // Decide on the translated #version line.
     std::string newVerLine;
     if (isEs) {
-      // Already ES — leave alone (100, 300 es, 310 es, 320 es)
+      // Already ES - leave alone (100, 300 es, 310 es, 320 es)
       newVerLine = verLine;
     } else if (verNum <= 120) {
-      // Desktop 1.1x — uses attribute/varying, maps to ES 1.00
+      // Desktop 1.1x - uses attribute/varying, maps to ES 1.00
       newVerLine = "#version 100";
     } else {
-      // Desktop 1.30+ / 3.30+ — uses in/out, maps to ES 3.00
+      // Desktop 1.30+ / 3.30+ - uses in/out, maps to ES 3.00
       newVerLine = "#version 300 es";
     }
 
@@ -655,7 +654,7 @@ gl_glShaderSource(GLuint shader, GLsizei count, const GLchar *const *string,
         textStart++;
       // Detect a preprocessor line we should preserve before precision.
       bool isExt = src.compare(textStart, 10, "#extension") == 0;
-      // Detect a fully blank line or a // line comment — both safe to skip.
+      // Detect a fully blank line or a // line comment - both safe to skip.
       bool isBlank = (textStart >= src.size() || src[textStart] == '\n');
       bool isLineComment = textStart + 2 <= src.size() &&
                            src[textStart] == '/' && src[textStart + 1] == '/';
@@ -669,7 +668,7 @@ gl_glShaderSource(GLuint shader, GLsizei count, const GLchar *const *string,
       std::string line = src.substr(lineBeg, lineEndPos - lineBeg);
       if (isExt && toEs3) {
         // Desktop-only ARB extensions that have no ES 3.00 equivalent
-        // OR whose feature is built-in to ES 3.00 — strip them out
+        // OR whose feature is built-in to ES 3.00 - strip them out
         // (replace with comment to preserve line count for error
         // reporting). Keep ES-compatible extensions (e.g.
         // GL_OES_*, GL_EXT_shader_texture_lod) which ANGLE handles.
@@ -799,7 +798,7 @@ extern "C" __declspec(dllexport) GLuint WINAPI gl_glCreateProgram(void) {
   return id;
 }
 
-// glDeleteProgram — keep our `g_currentProgram` cache valid: if we just
+// glDeleteProgram - keep our `g_currentProgram` cache valid: if we just
 // deleted the program that was currently bound, ANGLE will set
 // GL_CURRENT_PROGRAM to 0 internally, so reflect that in our cache too.
 // Without this, gl_glUniform* calls after DeleteProgram of the current
@@ -818,7 +817,7 @@ gl_glDeleteProgram(GLuint program) {
     g_programLinked[program].store(0, std::memory_order_relaxed);
   }
   // Sync g_currentProgram with ANGLE's actual GL_CURRENT_PROGRAM on this
-  // thread. g_currentProgram is thread_local — we can only fix the calling
+  // thread. g_currentProgram is thread_local - we can only fix the calling
   // thread here. ANGLE resets GL_CURRENT_PROGRAM to 0 when the bound program is
   // deleted; querying once is cheaper than a stale cache causing a null-deref
   // in gl_glUniform*.
@@ -895,7 +894,7 @@ typedef void(WINAPI *PFN_GPV2)(GLuint, GLenum, GLint *);
 extern "C" bool gdangle_currentProgramOK() {
   // Fast path: g_currentProgram is maintained by our gl_glUseProgram proxy.
   // When it holds a real program ID (not the sentinel), we can check the
-  // link-status cache without ANY driver call — O(1), ~1 ns.
+  // link-status cache without ANY driver call - O(1), ~1 ns.
   // We only fall back to the expensive glGetIntegerv round-trip when
   // g_currentProgram == 0xFFFFFFFFu, which means a foreign caller
   // (e.g. peony.silicate) bound a program by calling libGLESv2.dll directly,
@@ -909,21 +908,21 @@ extern "C" bool gdangle_currentProgramOK() {
       int8_t cached = g_programLinked[ucur].load(std::memory_order_relaxed);
       if (cached == 2)
         return true; // known good
-      // cached == 0 or 1: re-verify with glIsProgram() — ANGLE recycles IDs.
+      // cached == 0 or 1: re-verify with glIsProgram() - ANGLE recycles IDs.
       typedef GLboolean(WINAPI * PFN_IP2)(GLuint);
       static PFN_IP2 pIsP2 = (PFN_IP2)glproxy::resolve("glIsProgram");
       if (!pIsP2 || pIsP2(ucur) == 0) {
         g_programLinked[ucur].store(1, std::memory_order_relaxed);
-        return false; // deleted/invalid — skip draw
+        return false; // deleted/invalid - skip draw
       }
-      // Program exists — fall through to slow path for glGetProgramiv.
+      // Program exists - fall through to slow path for glGetProgramiv.
     } else {
       return true; // ID >= 16384: assume OK
     }
     // Fall through to slow path to verify unknown live program
   }
 
-  // Slow path: program status unknown — query glGetProgramiv once per ID.
+  // Slow path: program status unknown - query glGetProgramiv once per ID.
   // Reached when: (a) g_currentProgram == sentinel (silicate used libGLESv2
   // directly),
   //           or: (b) fast-path cache miss (cached==0, ID known but never
@@ -949,7 +948,7 @@ extern "C" bool gdangle_currentProgramOK() {
   // queries. Reset to sentinel each frame via gdangle_invalidateProgramCache().
   thread_local GLuint t_lastProg = 0xFFFFFFFFu;
   thread_local bool t_lastOK = true;
-  // Always re-check if g_currentProgram is sentinel — silicate may have
+  // Always re-check if g_currentProgram is sentinel - silicate may have
   // deleted and recreated the program between frames without going via proxy.
   if ((GLuint)cur == t_lastProg && g_currentProgram != 0xFFFFFFFFu)
     return t_lastOK;
@@ -961,19 +960,19 @@ extern "C" bool gdangle_currentProgramOK() {
     if (cached == 2) {
       ok = true; // known good
     } else {
-      // cached == 0 or 1: re-verify — ANGLE recycles IDs, a previously
+      // cached == 0 or 1: re-verify - ANGLE recycles IDs, a previously
       // failed/deleted ID may now be a new valid program.
-      // Use glIsProgram() first — safe call that returns GL_FALSE for deleted/
+      // Use glIsProgram() first - safe call that returns GL_FALSE for deleted/
       // invalid IDs without triggering ANGLE's internal ASSERT (unlike
       // glGetProgramiv).
       typedef GLboolean(WINAPI * PFN_IP)(GLuint);
       static PFN_IP pIsP = (PFN_IP)glproxy::resolve("glIsProgram");
       if (!pIsP || pIsP(ucur) == 0) {
-        // Program doesn't exist in ANGLE — mark bad and skip draw.
+        // Program doesn't exist in ANGLE - mark bad and skip draw.
         g_programLinked[ucur].store(1, std::memory_order_relaxed);
         ok = false;
       } else {
-        // Program exists — now safe to query link status.
+        // Program exists - now safe to query link status.
         GLint ls = 0;
         pGetPv(ucur, 0x8B82 /*GL_LINK_STATUS*/, &ls);
         ok = (ls != 0);
@@ -996,14 +995,14 @@ extern "C" bool gdangle_currentProgramOK() {
 extern "C" void gdangle_invalidateProgramCache() {
   // Reset sentinel so next draw call re-queries GL_CURRENT_PROGRAM.
   // Only do it if we're in sentinel state (foreign program path).
-  // If g_currentProgram holds a real ID keep it — it's maintained by our proxy.
+  // If g_currentProgram holds a real ID keep it - it's maintained by our proxy.
   if (g_currentProgram == 0xFFFFFFFFu) {
-    // Nothing to do — slow path already queries live each time.
+    // Nothing to do - slow path already queries live each time.
     // But force t_lastProg reset by temporarily resetting g_currentProgram
     // so next gdangle_currentProgramOK call re-runs glGetIntegerv.
-    // (t_lastProg is thread_local inside the function — we can't reset it
+    // (t_lastProg is thread_local inside the function - we can't reset it
     // here.) Instead: clear the programLinked cache entry for the last seen
-    // foreign program — it will be re-verified on next draw.
+    // foreign program - it will be re-verified on next draw.
   }
   // More importantly: if a real cached program was silently deleted by a
   // foreign caller, we need to invalidate its g_programLinked entry. The safest
@@ -1016,7 +1015,7 @@ extern "C" void gdangle_invalidateProgramCache() {
   GLint actual = 0;
   pGetI(0x8B8D /*GL_CURRENT_PROGRAM*/, &actual);
   // Only update cache if ANGLE reports a real program; keep existing ID
-  // otherwise. Do NOT invalidate g_programLinked — deleted programs should stay
+  // otherwise. Do NOT invalidate g_programLinked - deleted programs should stay
   // as cached=1 (bad) or remain unverified (0). Resetting to 0 would trigger a
   // glGetProgramiv on a potentially-deleted program which causes ANGLE to crash
   // inside its own ASSERT.
@@ -1029,7 +1028,7 @@ extern "C" void gdangle_invalidateProgramCache() {
 
 typedef void(WINAPI *PFN_UP)(GLuint);
 typedef void(WINAPI *PFN_GIV)(GLenum, GLint *);
-// thread_local current program — used by uniform dedup and dgd_noProgramBound.
+// thread_local current program - used by uniform dedup and dgd_noProgramBound.
 thread_local GLuint g_currentProgram = 0xFFFFFFFFu;
 extern "C" __declspec(dllexport) void WINAPI gl_glUseProgram(GLuint program) {
   static PFN_UP p = nullptr;
@@ -1038,7 +1037,7 @@ extern "C" __declspec(dllexport) void WINAPI gl_glUseProgram(GLuint program) {
     p = (PFN_UP)glproxy::resolve("glUseProgram");
   if (!pGetI)
     pGetI = (PFN_GIV)glproxy::resolve("glGetIntegerv");
-  // Skip the driver call only when we're certain the cache is valid —
+  // Skip the driver call only when we're certain the cache is valid -
   // i.e. it holds a real program ID (not the uninitialised sentinel).
   if (g_currentProgram != 0xFFFFFFFFu && program == g_currentProgram)
     return;
@@ -1218,7 +1217,7 @@ static inline unsigned uniHash(GLuint prog, GLint loc) {
 // bound, leading to crashes only when ReviANGLE is active. Match desktop
 // behaviour to keep these mods alive.
 //
-// Cache-only check (hot path — ~10000 calls/frame from cocos2d). Cache
+// Cache-only check (hot path - ~10000 calls/frame from cocos2d). Cache
 // validity is maintained by:
 //   - gl_glUseProgram:   queries GL_CURRENT_PROGRAM after each bind to
 //                        catch ANGLE rejecting invalid program IDs.
@@ -1234,7 +1233,7 @@ static inline bool gd_noProgramBound() {
   // Sync once so uniform dedup and this check see the real state.
   static auto pGetI = (PFN_GIV)glproxy::resolve("glGetIntegerv");
   if (!pGetI)
-    return false; // can't verify — allow the call through
+    return false; // can't verify - allow the call through
   GLint cur = 0;
   pGetI(0x8B8D /*GL_CURRENT_PROGRAM*/, &cur);
   g_currentProgram = (GLuint)cur; // update cache for subsequent calls
@@ -1455,7 +1454,7 @@ gl_glUniform3fv(GLint location, GLsizei count, const GLfloat *value) {
     p(location, count, value);
 }
 
-// glUniform4fv (count==1) dedup — used for color arrays, lighting params.
+// glUniform4fv (count==1) dedup - used for color arrays, lighting params.
 typedef void(WINAPI *PFN_U4FV)(GLint, GLsizei, const GLfloat *);
 extern "C" __declspec(dllexport) void WINAPI
 gl_glUniform4fv(GLint location, GLsizei count, const GLfloat *value) {
@@ -1558,7 +1557,7 @@ GLP_EXT_FORWARD_VOID(UniformMatrix2fv,
                      (GLint location, GLsizei count, GLboolean transpose,
                       const GLfloat *value),
                      (location, count, transpose, value))
-// glUniformMatrix3fv (count==1) dedup — used by some custom shaders.
+// glUniformMatrix3fv (count==1) dedup - used by some custom shaders.
 typedef void(WINAPI *PFN_UM3FV)(GLint, GLsizei, GLboolean, const GLfloat *);
 extern "C" __declspec(dllexport) void WINAPI gl_glUniformMatrix3fv(
     GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) {
@@ -1581,7 +1580,7 @@ extern "C" __declspec(dllexport) void WINAPI gl_glUniformMatrix3fv(
     p(location, count, transpose, value);
 }
 
-// glUniformMatrix4fv — dedup against last value per (program, location).
+// glUniformMatrix4fv - dedup against last value per (program, location).
 // Cocos2d-x uploads MVP matrix on every sprite draw even when identical.
 // Uses lock-free direct-mapped fixed-size cache (no heap allocations on hot
 // path).
@@ -1617,10 +1616,10 @@ extern "C" __declspec(dllexport) void WINAPI gl_glUniformMatrix4fv(
     p(location, count, transpose, value);
 }
 
-// glVertexAttribPointer dedup — cocos2d sets identical layout
+// glVertexAttribPointer dedup - cocos2d sets identical layout
 // (position/color/UV) on every sprite. Per-index cache of (size, type,
 // normalized, stride, pointer)
-// + currently-bound ARRAY_BUFFER. If all match — skip the call. ANGLE then
+// + currently-bound ARRAY_BUFFER. If all match - skip the call. ANGLE then
 // avoids re-validating the vertex layout on each sprite (~1 µs saved per call).
 //
 // IMPORTANT: cache must invalidate when the bound ARRAY_BUFFER changes, because
@@ -1742,7 +1741,7 @@ GLP_EXT_FORWARD_VOID(VertexAttrib4fv, (GLuint index, const GLfloat *v),
 GLP_EXT_FORWARD_VOID(GenFramebuffers, (GLsizei n, GLuint *framebuffers),
                      (n, framebuffers))
 
-// glBindFramebuffer — no dedup. FB binds are not on the hot path (cocos2d
+// glBindFramebuffer - no dedup. FB binds are not on the hot path (cocos2d
 // does them only for render-to-texture passes, ~tens per frame max).
 //
 // Previous version had per-target dedup, but the thread_local cache survived
@@ -1807,7 +1806,7 @@ GLP_EXT_FORWARD_VOID(GetFramebufferAttachmentParameteriv,
 GLP_EXT_FORWARD_VOID(GenRenderbuffers, (GLsizei n, GLuint *renderbuffers),
                      (n, renderbuffers))
 
-// glBindRenderbuffer — no dedup, plus track the binding ourselves so that
+// glBindRenderbuffer - no dedup, plus track the binding ourselves so that
 // downstream glRenderbufferStorage* can verify a renderbuffer is actually
 // bound before forwarding (ANGLE crashes if not, desktop-GL silently fails).
 thread_local GLuint g_currentRBO = 0xFFFFFFFFu;
@@ -1822,7 +1821,7 @@ gl_glBindRenderbuffer(GLenum target, GLuint renderbuffer) {
   if (p)
     p(target, renderbuffer);
 }
-// glRenderbufferStorage / Multisample — desktop-GL parity guard. ANGLE
+// glRenderbufferStorage / Multisample - desktop-GL parity guard. ANGLE
 // crashes (null deref deep in libGLESv2) if no RBO is bound to GL_RENDERBUFFER
 // at call time. Cocos2d's CCEGLView::updateWindow (called during fullscreen
 // toggle) sometimes invokes RenderbufferStorage before the calling code has
@@ -1903,7 +1902,7 @@ GLP_EXT_FORWARD_VOID(StencilOpSeparate,
 // gl_glSampleCoverage moved to gl_proxy.cpp with dedup.
 
 // ============================================================
-// Desktop-only OpenGL stubs — not present in OpenGL ES / ANGLE
+// Desktop-only OpenGL stubs - not present in OpenGL ES / ANGLE
 // ============================================================
 // These functions exist in desktop OpenGL 1.x/2.x/3.x but have no
 // equivalent in OpenGL ES (GLES 2/3). Geode mods compiled against desktop
@@ -2036,14 +2035,14 @@ struct GdAttribSnapshot {
   GLint blendEqRGB;
   GLint blendEqAlpha;
 
-  // Depth state — cocos2d sometimes disables depth-mask for transparent
+  // Depth state - cocos2d sometimes disables depth-mask for transparent
   // sprite passes; if ImGui's restore leaves it differently, the next
   // pass corrupts the depth buffer.
   GLint depthFunc;
   GLboolean depthMask;
   GLfloat depthRange[2];
 
-  // Stencil state (front-face only — we mirror to back).
+  // Stencil state (front-face only - we mirror to back).
   // Stencil is critical for CCClippingNode masking; if MegaHack leaves
   // GL_STENCIL_TEST on or with a bad func, clipping nodes disappear.
   GLint stencilFunc;
@@ -2054,7 +2053,7 @@ struct GdAttribSnapshot {
   GLint stencilOpZFail;
   GLint stencilOpZPass;
 
-  // Pixel-store state — ImGui uses UNPACK_ROW_LENGTH for partial atlas
+  // Pixel-store state - ImGui uses UNPACK_ROW_LENGTH for partial atlas
   // updates. If left non-zero after Pop, cocos2d's tight texture
   // uploads sample wrong row offsets => corrupted textures.
   GLint unpackAlignment;
@@ -2062,13 +2061,13 @@ struct GdAttribSnapshot {
   GLint unpackSkipRows;
   GLint unpackSkipPixels;
 
-  // Clear color — cheap to save, catches mods that change it.
+  // Clear color - cheap to save, catches mods that change it.
   GLfloat clearColor[4];
 
   // Per-slot vertex attribute state. cocos2d and MegaHack/ImGui share
   // the default VAO 0 (the only one ANGLE/GLES allows by default) so
   // ImGui's vertex pointer/format inside VAO 0 leak back into cocos2d's
-  // draws after Pop — producing garbage vertex data => invisible sprites.
+  // draws after Pop - producing garbage vertex data => invisible sprites.
   // We save the state per-slot to avoid this.
   struct {
     GLboolean enabled;
@@ -2092,7 +2091,7 @@ gl_glPushAttrib(GLbitfield /*mask*/) {
     static int warnN = 0;
     if (warnN < 4) {
       angle::forceLog(
-          "glPushAttrib: stack overflow (>16) — state will be lost on Pop");
+          "glPushAttrib: stack overflow (>16) - state will be lost on Pop");
       warnN++;
     }
     return;
@@ -2180,7 +2179,7 @@ gl_glPushAttrib(GLbitfield /*mask*/) {
   pGetI(0x0B95 /*GL_STENCIL_PASS_DEPTH_FAIL*/, &s.stencilOpZFail);
   pGetI(0x0B96 /*GL_STENCIL_PASS_DEPTH_PASS*/, &s.stencilOpZPass);
 
-  // Pixel-store state (unpack side only — pack side isn't touched by ImGui)
+  // Pixel-store state (unpack side only - pack side isn't touched by ImGui)
   pGetI(0x0CF5 /*GL_UNPACK_ALIGNMENT*/, &s.unpackAlignment);
   pGetI(0x0CF2 /*GL_UNPACK_ROW_LENGTH*/, &s.unpackRowLength);
   pGetI(0x0CF3 /*GL_UNPACK_SKIP_ROWS*/, &s.unpackSkipRows);
@@ -2378,7 +2377,7 @@ extern "C" __declspec(dllexport) void WINAPI gl_glPopAttrib() {
       pDepthRange(s.depthRange[0], s.depthRange[1]);
   }
 
-  // Stencil state restore (apply to both faces — safe for cocos2d's use)
+  // Stencil state restore (apply to both faces - safe for cocos2d's use)
   {
     typedef void(WINAPI * PFN_SF)(GLenum, GLint, GLuint);
     typedef void(WINAPI * PFN_SM)(GLuint);
@@ -2638,7 +2637,7 @@ extern "C" __declspec(dllexport) void WINAPI gl_glListBase(GLuint /*base*/) {}
 extern "C" __declspec(dllexport) void WINAPI
 gl_glDrawRangeElements(GLenum mode, GLuint /*start*/, GLuint /*end*/,
                        GLsizei count, GLenum type, const GLvoid *indices) {
-  // Forward to glDrawElements — start/end are only hints, safe to ignore
+  // Forward to glDrawElements - start/end are only hints, safe to ignore
   typedef void(WINAPI * PFN)(GLenum, GLsizei, GLenum, const GLvoid *);
   static PFN p = nullptr;
   if (!p)
@@ -2715,7 +2714,7 @@ gl_glDrawElementsInstanced(GLenum mode, GLsizei count, GLenum type,
     pPlain(mode, count, type, indices);
 }
 
-// --- Occlusion queries (GL 1.5) — GLES3 has them, forward if available ---
+// --- Occlusion queries (GL 1.5) - GLES3 has them, forward if available ---
 GLP_EXT_FORWARD_VOID(GenQueries, (GLsizei n, GLuint *ids), (n, ids))
 GLP_EXT_FORWARD_VOID(DeleteQueries, (GLsizei n, const GLuint *ids), (n, ids))
 GLP_EXT_FORWARD(GLboolean, IsQuery, (GLuint id), (id))

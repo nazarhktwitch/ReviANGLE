@@ -18,7 +18,7 @@ When to use: **first time installing**, on a hardware combo that hasn't been tes
 Tuned for the developer's hardware: **Intel i5-3230M (Ivy Bridge, 2C/4T)** + **NVIDIA GT 630M (Kepler)** + **8 GB RAM** + **90 Hz display** + **Windows 10 22H2**.
 
 - All "safe" optimizations **on**.
-- Frame pacing **on** with `target=120` — 8.3 ms budget per frame, fits worst-case effects on this hardware.
+- Frame pacing **on** with `target=120` - 8.3 ms budget per frame, fits worst-case effects on this hardware.
 - Online features **blocked during gameplay** (`online_block_gameplay=true`) for stability.
 - A handful of "risky" tweaks **on** (`tex_compress`, `vbo_pool`, etc.) that are stable on the tested hardware but may not be on yours.
 
@@ -27,8 +27,8 @@ When to use: similar hardware vintage (anything weak, ~2010-2014 era laptop). Te
 ## `angle_config.benchmark.ini`
 
 Same as `best-feel`, but:
-- `frame_pacing=false` — no FPS cap, see your true uncapped FPS.
-- `debug=true` — verbose log to `angle_log.txt` for measurement.
+- `frame_pacing=false` - no FPS cap, see your true uncapped FPS.
+- `debug=true` - verbose log to `angle_log.txt` for measurement.
 
 When to use: **benchmarking**. Run a level a few times, check `angle_log.txt` for FPS counters, then go back to `best-feel` once you've found your worst-case FPS for picking `frame_pacing_target`.
 

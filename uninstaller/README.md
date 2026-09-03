@@ -58,4 +58,4 @@ Simply run `ReviANGLE-Uninstall.exe`:
 
 ## License
 
-MIT — same as ReviANGLE
+MIT - same as ReviANGLE

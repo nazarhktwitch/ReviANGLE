@@ -46,7 +46,7 @@ EXPORTS
     glIsEnabled            = libGLESv2.glIsEnabled
     glLineWidth            = libGLESv2.glLineWidth
     glPixelStorei          = libGLESv2.glPixelStorei
-    ; Desktop-only GL functions — not in libGLESv2; route to our local stubs.
+    ; Desktop-only GL functions - not in libGLESv2; route to our local stubs.
     glPolygonMode             = gl_glPolygonMode
     glDrawElementsBaseVertex  = gl_glDrawElementsBaseVertex
     glPrimitiveRestartIndex   = gl_glPrimitiveRestartIndex

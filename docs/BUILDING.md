@@ -11,18 +11,18 @@
 
 > **Note**: Geometry Dash 2.2+ is a 64-bit process, so the proxy DLL must be built for **x64**. The CMakeLists enforces this with a `CMAKE_GENERATOR_PLATFORM` check; pass `cmake -A x64` to be explicit.
 
-## Step 1 — Clone
+## Step 1 - Clone
 
 ```powershell
 git clone https://github.com/Reviusion/ReviANGLE.git
 cd ReviANGLE
 ```
 
-## Step 2 — Get ANGLE prebuilts
+## Step 2 - Get ANGLE prebuilts
 
-The ANGLE library (`libEGL.dll`, `libGLESv2.dll`, `d3dcompiler_47.dll`) is **not** part of this repo — those binaries are large and have their own license. Three options:
+The ANGLE library (`libEGL.dll`, `libGLESv2.dll`, `d3dcompiler_47.dll`) is **not** part of this repo - those binaries are large and have their own license. Three options:
 
-### Option A — copy from a release ZIP (easiest)
+### Option A - copy from a release ZIP (easiest)
 
 Download the latest release from [Releases](https://github.com/Reviusion/ReviANGLE/releases), unzip, and copy:
 ```
@@ -30,9 +30,9 @@ libEGL.dll
 libGLESv2.dll
 d3dcompiler_47.dll
 ```
-into a folder you'll later use for testing. (Build output doesn't depend on these — they're loaded at runtime.)
+into a folder you'll later use for testing. (Build output doesn't depend on these - they're loaded at runtime.)
 
-### Option B — extract from Chromium / Edge
+### Option B - extract from Chromium / Edge
 
 ANGLE is bundled with Chromium-based browsers. You can copy the three DLLs from:
 ```
@@ -40,11 +40,11 @@ C:\Program Files (x86)\Microsoft\Edge\Application\<version>\
 C:\Program Files\Google\Chrome\Application\<version>\
 ```
 
-### Option C — build ANGLE from source
+### Option C - build ANGLE from source
 
 See [ANGLE's official build instructions](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/doc/DevSetup.md). This is a multi-hour process and **not recommended** unless you specifically need a custom ANGLE build.
 
-## Step 3 — Configure & build
+## Step 3 - Configure & build
 
 ```powershell
 # from the repo root
@@ -63,7 +63,7 @@ build/Release/
 └── ini_round_trip_test.exe   ← internal test (optional)
 ```
 
-## Step 4 — Test the build
+## Step 4 - Test the build
 
 ```powershell
 # Quick verify build artifacts exist & link is clean:
@@ -118,8 +118,8 @@ cmake -B build -A x64 -G "Visual Studio 17 2022"
 
 ### NVAPI link errors
 
-The mod loads NVAPI dynamically at runtime via `LoadLibraryA("nvapi.dll")` — you should **not** be linking `nvapi.lib` at build time. If you see NVAPI link errors, check `boost_nvapi.cpp` is the only file referencing NVAPI symbols and uses dynamic loading.
+The mod loads NVAPI dynamically at runtime via `LoadLibraryA("nvapi.dll")` - you should **not** be linking `nvapi.lib` at build time. If you see NVAPI link errors, check `boost_nvapi.cpp` is the only file referencing NVAPI symbols and uses dynamic loading.
 
 ## Continuous integration
 
-`.github/workflows/build.yml` runs the build on every push. See the [Actions tab](https://github.com/Reviusion/ReviANGLE/actions) for the latest build status. CI artifacts are attached to each successful run — useful if you want a build without running the toolchain locally.
+`.github/workflows/build.yml` runs the build on every push. See the [Actions tab](https://github.com/Reviusion/ReviANGLE/actions) for the latest build status. CI artifacts are attached to each successful run - useful if you want a build without running the toolchain locally.

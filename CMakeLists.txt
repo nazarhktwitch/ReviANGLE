@@ -26,11 +26,11 @@ message(STATUS "ReviANGLE backends: D3D11=${REVIANGLE_BACKEND_D3D11} Vulkan=${RE
 set(REVIANGLE_BIN_DIR "${CMAKE_BINARY_DIR}/bin")
 set(REVIANGLE_DLL_DIR "${CMAKE_BINARY_DIR}/dll")
 
-# Static-link MSVC runtime — eliminates MSVCP140.dll / VCRUNTIME140.dll
+# Static-link MSVC runtime - eliminates MSVCP140.dll / VCRUNTIME140.dll
 # external dependencies, makes DLL self-contained
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
-# GD 2.2+ is x64 — require x64 build
+# GD 2.2+ is x64 - require x64 build
 if (NOT CMAKE_GENERATOR_PLATFORM STREQUAL "x64")
     message(WARNING "GD is 64-bit. Configure with: cmake -A x64")
 endif()
@@ -235,7 +235,7 @@ set_target_properties(${OUT_NAME} PROPERTIES
 )
 
 # ============================================================================
-# Config editor (separate exe) — Win32 + DX11 + Dear ImGui
+# Config editor (separate exe) - Win32 + DX11 + Dear ImGui
 # Builds standalone gd-angle-editor.exe (~5 MB, no runtime deps).
 # ============================================================================
 set(EDITOR_DIR ${CMAKE_CURRENT_SOURCE_DIR}/config_editor)

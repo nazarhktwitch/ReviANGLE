@@ -3,7 +3,7 @@
 ## TL;DR
 
 1. **Backup** your `Geometry Dash` folder (or at minimum the existing `opengl32.dll` if any).
-2. Download the latest [Release](https://github.com/Reviusion/ReviANGLE/releases) ZIP — choose **DirectX 11** (most compatible) or **Vulkan** (modern GPUs).
+2. Download the latest [Release](https://github.com/Reviusion/ReviANGLE/releases) ZIP - choose **DirectX 11** (most compatible) or **Vulkan** (modern GPUs).
 3. Unzip into your GD install folder (where `GeometryDash.exe` lives).
 4. Run `gd-angle-editor.exe` to tune (optional), or just launch GD.
 
@@ -24,10 +24,10 @@ You should see `GeometryDash.exe` in this folder.
 ### 2. Download the release
 
 Go to https://github.com/nazarhktwitch/ReviANGLE/releases and download one of:
-- `ReviANGLE-vX.Y.Z-DX11-win64.zip` — Default, most compatible
-- `ReviANGLE-vX.Y.Z-Vulkan-win64.zip` — Modern GPUs (RTX, Radeon RX), better performance
+- `ReviANGLE-vX.Y.Z-DX11-win64.zip` - Default, most compatible
+- `ReviANGLE-vX.Y.Z-Vulkan-win64.zip` - Modern GPUs (RTX, Radeon RX), better performance
 
-**Can't decide?** Start with DirectX 11 — it's stable on all hardware.
+**Can't decide?** Start with DirectX 11 - it's stable on all hardware.
 
 ### 3. Unzip
 
@@ -89,9 +89,9 @@ Geometry Dash/
 
 Run `gd-angle-editor.exe`. The GUI shows every option with bilingual descriptions, current value, and impact estimates. Save your config when done.
 
-Or edit `angle_config.ini` in any text editor — every option has full bilingual comments.
+Or edit `angle_config.ini` in any text editor - every option has full bilingual comments.
 
-The shipped default is the **best-feel preset** for the developer's tested hardware (Intel i5-3230M + GT 630M, 90 Hz). If you have different hardware, the most important option to retune is `frame_pacing_target` — see the comment in the file.
+The shipped default is the **best-feel preset** for the developer's tested hardware (Intel i5-3230M + GT 630M, 90 Hz). If you have different hardware, the most important option to retune is `frame_pacing_target` - see the comment in the file.
 
 ### 6. Launch GD
 
@@ -104,7 +104,7 @@ If everything works, you'll see:
 Check `angle_log.txt`. Successful first lines with DirectX 11 look like:
 ```
 [ReviANGLE] DllMain DLL_PROCESS_ATTACH
-ReviANGLE attached — 84 boost modules, backend=d3d11
+ReviANGLE attached - 84 boost modules, backend=d3d11
 gpu_forcer: NvOptimusEnablement export installed
 nvapi: using app profile for GeometryDash.exe
 nvapi: PREFERRED_PSTATE=PreferMax = 0x00000000 applied
@@ -118,7 +118,7 @@ gpu_thread_prio: GPU thread priority = +7 (max)
 With Vulkan:
 ```
 [ReviANGLE] DllMain DLL_PROCESS_ATTACH
-ReviANGLE attached — 84 boost modules, backend=vulkan
+ReviANGLE attached - 84 boost modules, backend=vulkan
 ...
 ```
 
@@ -162,7 +162,7 @@ If you renamed an original `opengl32.dll.backup`, rename it back.
 - If using DirectX 11 build: `d3dcompiler_47.dll`
 - If using Vulkan build: `vulkan-1.dll`
 
-If `angle_log.txt` doesn't appear, the mod's `DllMain` never ran — usually means the DLL is corrupted or for the wrong architecture (64-bit only for GD 2.2+). Re-download the correct build.
+If `angle_log.txt` doesn't appear, the mod's `DllMain` never ran - usually means the DLL is corrupted or for the wrong architecture (64-bit only for GD 2.2+). Re-download the correct build.
 
 ### GD starts but black screen / no rendering
 
@@ -189,7 +189,7 @@ This usually means `frame_pacing_target` is too high for your GPU.
 - If your **peak uncapped FPS** during effects is, say, 110 → set `frame_pacing_target=90` (with headroom).
 - If you don't know your peak FPS: set `frame_pacing=false` once, run a hard level, watch FPS counter, then re-enable pacing with target ~ 80 % of your worst-case FPS.
 
-See the long bilingual comment around `frame_pacing_target` in `angle_config.ini` — it has a full explanation with budget math.
+See the long bilingual comment around `frame_pacing_target` in `angle_config.ini` - it has a full explanation with budget math.
 
 ### Crashes on launch with NVAPI errors in log
 

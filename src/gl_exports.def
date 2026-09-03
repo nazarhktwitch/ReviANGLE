@@ -42,7 +42,7 @@ EXPORTS
     glPixelStorei          = gl_glPixelStorei
     glPolygonMode          = gl_glPolygonMode
     glPolygonOffset        = gl_glPolygonOffset
-    ; GL 3.x desktop functions absent in GLES — provide stubs to prevent NULL crashes
+    ; GL 3.x desktop functions absent in GLES - provide stubs to prevent NULL crashes
     glDrawElementsBaseVertex = gl_glDrawElementsBaseVertex
     glPrimitiveRestartIndex  = gl_glPrimitiveRestartIndex
     glProvokingVertex        = gl_glProvokingVertex

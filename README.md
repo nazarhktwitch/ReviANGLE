@@ -4,7 +4,7 @@
 
 **A drop-in `opengl32.dll` proxy that routes Geometry Dash's OpenGL through Google ANGLE → DirectX 11 or Vulkan.**
 
-*Unlock FPS, reduce input lag, eliminate microstutters — all on hardware Geometry Dash never officially targeted. Now with full Vulkan backend support for maximum compatibility.*
+*Unlock FPS, reduce input lag, eliminate microstutters - all on hardware Geometry Dash never officially targeted. Now with full Vulkan backend support for maximum compatibility.*
 
 [![Build Windows](https://github.com/nazarhktwitch/ReviANGLE/actions/workflows/build.yml/badge.svg)](https://github.com/nazarhktwitch/ReviANGLE/actions/workflows/build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -34,7 +34,7 @@ This is an **active fork** of the original [ReviANGLE](https://github.com/Revius
 
 ReviANGLE is a performance mod for **Geometry Dash 2.2** that replaces the game's `opengl32.dll` with a custom proxy. The proxy:
 
-1. **Translates OpenGL → DirectX 11 or Vulkan** via [Google ANGLE](https://chromium.googlesource.com/angle/angle) — pick the backend that suits your GPU:
+1. **Translates OpenGL → DirectX 11 or Vulkan** via [Google ANGLE](https://chromium.googlesource.com/angle/angle) - pick the backend that suits your GPU:
    - **DirectX 11** (default): Most compatible, works on older laptops, stable.
    - **Vulkan**: Better performance on modern GPUs (GTX 1000+, RTX, Radeon RX series), requires recent driver updates.
 2. Adds **84 low-level performance modules** that hook into ANGLE's hot path:
@@ -46,8 +46,8 @@ ReviANGLE is a performance mod for **Geometry Dash 2.2** that replaces the game'
    - NVAPI driver profile (PSTATE=P0, max-perf, no driver vsync)
    - Working-set lock so Windows doesn't page our hot data out
    - GPU thread priority bump
-   - 40+ other tweaks — see [`docs/CONFIG_REFERENCE.md`](docs/CONFIG_REFERENCE.md)
-3. Ships with **ReviANGLE Studio** — a standalone GUI configurator with bilingual (EN/RU) descriptions for every option.
+   - 40+ other tweaks - see [`docs/CONFIG_REFERENCE.md`](docs/CONFIG_REFERENCE.md)
+3. Ships with **ReviANGLE Studio** - a standalone GUI configurator with bilingual (EN/RU) descriptions for every option.
 
 ### Why?
 
@@ -87,7 +87,7 @@ Geometry Dash/
 
 4. Launch GD. If everything works, `angle_log.txt` will appear next to the `.exe`.
 
-**Cannot decide which one?** Start with **DirectX 11** — it's the most stable. If you have an RTX or modern Radeon GPU and want max performance, try Vulkan.
+**Cannot decide which one?** Start with **DirectX 11** - it's the most stable. If you have an RTX or modern Radeon GPU and want max performance, try Vulkan.
 
 ### Configure
 
@@ -98,7 +98,7 @@ Run **`gd-angle-editor.exe`** for a GUI:
 - Comments and section structure preserved on save (round-trip safe)
 - One-click "Reset to defaults" applies the **best-feel preset** for the tested hardware
 
-Or edit `angle_config.ini` directly — it's plain text with full bilingual comments.
+Or edit `angle_config.ini` directly - it's plain text with full bilingual comments.
 
 **Changing backends:** If you're running the DirectX 11 build and want to switch to Vulkan (or vice versa), you need to download and install the other build's DLLs. Alternatively, set `backend=vulkan` in the config and manually add `vulkan-1.dll` to the folder (or use DirectX 9 with `backend=d3d9` if Vulkan is unavailable).
 
@@ -125,9 +125,9 @@ cmake -B build -A x64         # GD 2.2+ is 64-bit
 cmake --build build --config Release
 ```
 
-Output goes to `build\Release\` — `opengl32.dll` and `gd-angle-editor.exe`.
+Output goes to `build\Release\` - `opengl32.dll` and `gd-angle-editor.exe`.
 
-You'll also need the ANGLE prebuilt binaries (`libEGL.dll`, `libGLESv2.dll`, `d3dcompiler_47.dll`) — see [`docs/BUILDING.md`](docs/BUILDING.md#angle-prebuilts).
+You'll also need the ANGLE prebuilt binaries (`libEGL.dll`, `libGLESv2.dll`, `d3dcompiler_47.dll`) - see [`docs/BUILDING.md`](docs/BUILDING.md#angle-prebuilts).
 
 ### Project layout
 
@@ -165,8 +165,8 @@ ReviANGLE/
 
 | Symptom | Likely cause / fix |
 |---------|--------------------|
-| GD won't start, no `angle_log.txt` | Missing ANGLE DLLs — check `libEGL.dll`, `libGLESv2.dll` are next to `GeometryDash.exe`. If using DX11: also need `d3dcompiler_47.dll`. If using Vulkan: also need `vulkan-1.dll`. |
-| GD starts but black screen | Backend mismatch — open `angle_config.ini`, set `backend=d3d11` (most compatible) or `backend=vulkan` if you have the Vulkan DLLs. Check `angle_log.txt` for details. |
+| GD won't start, no `angle_log.txt` | Missing ANGLE DLLs - check `libEGL.dll`, `libGLESv2.dll` are next to `GeometryDash.exe`. If using DX11: also need `d3dcompiler_47.dll`. If using Vulkan: also need `vulkan-1.dll`. |
+| GD starts but black screen | Backend mismatch - open `angle_config.ini`, set `backend=d3d11` (most compatible) or `backend=vulkan` if you have the Vulkan DLLs. Check `angle_log.txt` for details. |
 | "Cannot load vulkan-1.dll" | You downloaded the DX11 build but set `backend=vulkan`. Either install the Vulkan build, or change `backend=d3d11` in `angle_config.ini`. |
 | FPS lower with mod than without | Set `frame_pacing_target` ≤ your GPU's worst-case FPS during effects (see config comment). |
 | First-level stutter | Enable `shader_warmup=true` in `angle_config.ini`. |
@@ -191,17 +191,17 @@ For more, see [`docs/INSTALLATION.md`](docs/INSTALLATION.md).
 ### Credits & acknowledgements
 
 - **ANGLE** team at Google for the GLES → D3D translation library.
-- **cocos2d-x** authors — GD's underlying engine.
-- **RobTop Games** — Geometry Dash itself (this mod is unaffiliated).
-- **Dear ImGui** — used for the configurator GUI.
+- **cocos2d-x** authors - GD's underlying engine.
+- **RobTop Games** - Geometry Dash itself (this mod is unaffiliated).
+- **Dear ImGui** - used for the configurator GUI.
 - **Original project**: Reviusion ([@Reviusion](https://github.com/Reviusion)).
 - **Fork maintainer**: NazarHK ([@nazarhktwitch](https://github.com/nazarhktwitch)) - Vulkan backend, uninstaller, active updates.
 
 ### License
 
-MIT — see [`LICENSE`](LICENSE). You may use, modify, redistribute, and even sell this code, as long as the copyright notice is preserved.
+MIT - see [`LICENSE`](LICENSE). You may use, modify, redistribute, and even sell this code, as long as the copyright notice is preserved.
 
-ANGLE binaries are licensed under the [BSD 3-Clause license](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/LICENSE) and are not part of this repository's source — they're bundled in releases for convenience only.
+ANGLE binaries are licensed under the [BSD 3-Clause license](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/LICENSE) and are not part of this repository's source - they're bundled in releases for convenience only.
 
 ### Disclaimer
 
@@ -213,7 +213,7 @@ This is a **third-party** modification. Use at your own risk. **Always back up y
 
 ### О этом форке
 
-Это **активный форк** оригинального проекта [ReviANGLE](https://github.com/Reviusion/ReviANGLE) с **одновременной поддержкой обоих бэкендов: DirectX 11 и Vulkan**. Поддерживается на [@nazarhktwitch/ReviANGLE](https://github.com/nazarhktwitch/ReviANGLE). Оригинальный репозиторий отслеживается — обновления upstream будут интегрироваться сюда по мере выхода.
+Это **активный форк** оригинального проекта [ReviANGLE](https://github.com/Reviusion/ReviANGLE) с **одновременной поддержкой обоих бэкендов: DirectX 11 и Vulkan**. Поддерживается на [@nazarhktwitch/ReviANGLE](https://github.com/nazarhktwitch/ReviANGLE). Оригинальный репозиторий отслеживается - обновления upstream будут интегрироваться сюда по мере выхода.
 
 **Ключевые отличия от оригинала:**
 - **Vulkan-бэкенд** собран из исходников ANGLE специально для этого проекта (DLL компилировались отдельно)
@@ -225,9 +225,9 @@ This is a **third-party** modification. Use at your own risk. **Always back up y
 
 ### Что это?
 
-ReviANGLE — это мод производительности для **Geometry Dash 2.2**, который подменяет `opengl32.dll` игры на свой proxy. Proxy:
+ReviANGLE - это мод производительности для **Geometry Dash 2.2**, который подменяет `opengl32.dll` игры на свой proxy. Proxy:
 
-1. **Переводит OpenGL → DirectX 11 / Vulkan** через [Google ANGLE](https://chromium.googlesource.com/angle/angle) — выбери бэкенд в зависимости от своего GPU:
+1. **Переводит OpenGL → DirectX 11 / Vulkan** через [Google ANGLE](https://chromium.googlesource.com/angle/angle) - выбери бэкенд в зависимости от своего GPU:
    - **DirectX 11** (по умолчанию): Максимально совместим, работает на старых лаптопах, стабилен.
    - **Vulkan**: Лучше производительность на современных GPU (GTX 1000+, RTX, Radeon RX), требует свежих драйверов.
 2. Добавляет **84 низкоуровневых модуля оптимизации**:
@@ -237,10 +237,10 @@ ReviANGLE — это мод производительности для **Geomet
    - Опционально: half-res рендер с линейным апскейлом (~30-50 % GPU выигрыш на слабых GPU)
    - Опционально: пропуск Present на idle-кадрах (экономия мощности GPU на меню)
    - NVAPI driver profile (PSTATE=P0, max-perf, выключение vsync на драйверном уровне)
-   - Working-set lock — Windows не выгружает наши горячие страницы при memory pressure
+   - Working-set lock - Windows не выгружает наши горячие страницы при memory pressure
    - Boost приоритета GPU thread
-   - И ещё 40+ tweaks — [`docs/CONFIG_REFERENCE.md`](docs/CONFIG_REFERENCE.md)
-3. Идёт с **ReviANGLE Studio** — отдельным GUI-конфигуратором с двуязычными (EN/RU) описаниями каждой опции.
+   - И ещё 40+ tweaks - [`docs/CONFIG_REFERENCE.md`](docs/CONFIG_REFERENCE.md)
+3. Идёт с **ReviANGLE Studio** - отдельным GUI-конфигуратором с двуязычными (EN/RU) описаниями каждой опции.
 
 ### Зачем?
 
@@ -279,9 +279,9 @@ Geometry Dash/
 └── gd-angle-editor.exe       ← опциональный GUI
 ```
 
-4. Запусти GD. Если всё ок — рядом с `.exe` появится `angle_log.txt`.
+4. Запусти GD. Если всё ок - рядом с `.exe` появится `angle_log.txt`.
 
-**Не можешь выбрать?** Начни с **DirectX 11** — это максимально стабильный вариант. Если у тебя RTX или современный Radeon и нужна максимальная производительность, попробуй Vulkan.
+**Не можешь выбрать?** Начни с **DirectX 11** - это максимально стабильный вариант. Если у тебя RTX или современный Radeon и нужна максимальная производительность, попробуй Vulkan.
 
 ### Настройка
 
@@ -292,7 +292,7 @@ Geometry Dash/
 - Комментарии и структура секций сохраняются при save (round-trip safe)
 - Кнопка "Reset to defaults" возвращает **best-feel preset** для тестового железа
 
-Или редактируй `angle_config.ini` напрямую — это plain text с полными двуязычными комментариями.
+Или редактируй `angle_config.ini` напрямую - это plain text с полными двуязычными комментариями.
 
 **Смена бэкенда:** Если ты использовал DirectX 11 build и хочешь перейти на Vulkan (или наоборот), нужно скачать и установить DLL из другого build. Альтернативно: поставь `backend=vulkan` в конфиг и вручную добавь `vulkan-1.dll` в папку (или используй `backend=d3d9`, если Vulkan недоступен).
 
@@ -308,15 +308,15 @@ cmake -B build -A x64         # GD 2.2+ это 64-битный процесс
 cmake --build build --config Release
 ```
 
-Сборка попадёт в `build\Release\` — `opengl32.dll`, `gd-angle-editor.exe` и `ReviANGLE-Uninstall.exe`.
+Сборка попадёт в `build\Release\` - `opengl32.dll`, `gd-angle-editor.exe` и `ReviANGLE-Uninstall.exe`.
 
-Также понадобятся ANGLE prebuilt бинарники (`libEGL.dll`, `libGLESv2.dll`, `d3dcompiler_47.dll`) — см. [`docs/BUILDING.md`](docs/BUILDING.md).
+Также понадобятся ANGLE prebuilt бинарники (`libEGL.dll`, `libGLESv2.dll`, `d3dcompiler_47.dll`) - см. [`docs/BUILDING.md`](docs/BUILDING.md).
 
 ### Лицензия
 
-MIT — см. [`LICENSE`](LICENSE). Можно использовать, модифицировать, перепродавать, при сохранении copyright notice.
+MIT - см. [`LICENSE`](LICENSE). Можно использовать, модифицировать, перепродавать, при сохранении copyright notice.
 
-ANGLE-бинарники лицензированы под [BSD 3-Clause](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/LICENSE) и НЕ являются частью исходников этого репо — они кладутся в релизы только для удобства.
+ANGLE-бинарники лицензированы под [BSD 3-Clause](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/LICENSE) и НЕ являются частью исходников этого репо - они кладутся в релизы только для удобства.
 
 ### Дисклеймер
 

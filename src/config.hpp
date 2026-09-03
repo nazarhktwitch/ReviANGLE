@@ -2,7 +2,6 @@
 #include <cstdint>
 #include <string>
 
-
 struct Config {
   // ANGLE
 #ifdef REVIANGLE_BACKEND_VULKAN
@@ -42,8 +41,8 @@ struct Config {
   // BoostRender
   bool depth_off = false;
   bool mipmap_off =
-      false; // safer default — some shaders rely on mipmap sampling
-  // Aggressive perf — masks OpenGL errors / forces pipeline behavior. Off by
+      false; // safer default - some shaders rely on mipmap sampling
+  // Aggressive perf - masks OpenGL errors / forces pipeline behavior. Off by
   // default for stability.
   bool noop_finish = false; // make glFinish a no-op (skip pipeline stalls)
   bool noop_geterror =
@@ -80,10 +79,10 @@ struct Config {
   int frame_pacing_target =
       0; // 0 = auto-detect monitor refresh; >0 = forced FPS cap
   bool mmcss_pro_audio = true;
-  bool shader_warmup = false; // off by default — can crash on invalid shaders
+  bool shader_warmup = false; // off by default - can crash on invalid shaders
   bool low_latency = true;
   bool gl_no_error =
-      true; // EGL_CONTEXT_OPENGL_NO_ERROR_KHR — kills per-call ANGLE validation
+      true; // EGL_CONTEXT_OPENGL_NO_ERROR_KHR - kills per-call ANGLE validation
   bool anti_stutter = true; // disable affinity auto-update + EcoQoS thread
                             // throttling for jitter
 
@@ -160,7 +159,7 @@ struct Config {
   bool huge_pages = false;     // needs SeLockMemoryPrivilege
   bool prefetcher_off = false; // needs admin
 
-  // BoostExtreme — additional Windows-level perf wins
+  // BoostExtreme - additional Windows-level perf wins
   bool workingset_lock =
       false; // hard-pin min working set so OS can't page us out
   bool gpu_thread_prio = true; // IDXGIDevice::SetGPUThreadPriority(+7)

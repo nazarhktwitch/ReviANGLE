@@ -10,7 +10,7 @@ This is an **active fork** of the original [ReviANGLE](https://github.com/Revius
 - Full Vulkan rendering pipeline implemented alongside DirectX 11
 - ANGLE DLLs (`libEGL.dll`, `libGLESv2.dll`) compiled separately from ANGLE source to include Vulkan support
 - Separate build targets for DX11-only and Vulkan-only configurations
-- Zero performance penalty — choose the backend at build time
+- Zero performance penalty - choose the backend at build time
 
 **2. Modern Uninstaller**
 - New `ReviANGLE-Uninstall.exe` tool with GUI
@@ -96,10 +96,10 @@ Tested on:
 
 ## Known Limitations & Considerations
 
-1. **Cannot run both backends simultaneously** — CMake enforces exactly one per build
-2. **ANGLE source code** — Not included in this repo; DLLs are pre-compiled binaries
-3. **Original author attribution** — Full credit to Reviusion for the base project
-4. **MIT License** — This fork maintains the same license as the original
+1. **Cannot run both backends simultaneously** - CMake enforces exactly one per build
+2. **ANGLE source code** - Not included in this repo; DLLs are pre-compiled binaries
+3. **Original author attribution** - Full credit to Reviusion for the base project
+4. **MIT License** - This fork maintains the same license as the original
 
 ## Contributing
 
@@ -112,7 +112,7 @@ Improvements to this fork are welcome:
 
 ## License
 
-MIT — see [`LICENSE`](LICENSE)
+MIT - see [`LICENSE`](LICENSE)
 
 ANGLE library binaries are licensed under [BSD 3-Clause](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/LICENSE).
 
