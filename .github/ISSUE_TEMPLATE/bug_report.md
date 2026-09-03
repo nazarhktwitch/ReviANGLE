@@ -26,7 +26,7 @@ assignees: ""
 
 ## Environment
 
-- **ReviANGLE version**:  <!-- e.g. v1.0.2, from the release ZIP filename -->
+- **ReviANGLE version**:  <!-- e.g. v1.1.0, from the release ZIP filename -->
 - **Geometry Dash version**:  <!-- e.g. 2.2 Steam build 12345 -->
 - **OS**:  <!-- e.g. Windows 10 22H2 build 19045 -->
 - **CPU**:  <!-- e.g. Intel i5-3230M @ 2.6 GHz, 2C/4T -->
@@ -46,6 +46,7 @@ assignees: ""
 ```
 PASTE THE CONTENTS OF angle_log.txt HERE
 (located next to GeometryDash.exe after the mod runs)
+(NO LOG FILE? - Set debug = true in angle_config.ini and run GD again)
 ```
 
 </details>
