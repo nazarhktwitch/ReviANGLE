@@ -77,6 +77,18 @@ Or edit `angle_config.ini` in any text editor.
 
 ---
 
+### Linux & Steam Deck (Proton / Wine)
+
+ReviANGLE is compatible with Linux & Steam Deck via Steam Play (Proton) or Wine:
+1. Extract the release ZIP into your Geometry Dash folder next to `GeometryDash.exe`.
+2. Right-click **Geometry Dash ➔ Properties ➔ Launch Options** in Steam.
+3. Add the launch command:
+   ```bash
+   WINEDLLOVERRIDES="opengl32=n,b" %command%
+   ```
+
+---
+
 ### 5. Launch GD
 
 Launch Geometry Dash. If everything works, you'll see:

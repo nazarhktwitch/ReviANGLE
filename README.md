@@ -92,6 +92,14 @@ Geometry Dash/
 
 **Cannot decide which one?** Start with **DirectX 11** - it's the most stable. If you have an RTX or modern Radeon GPU and want max performance, try Vulkan.
 
+#### Linux & Steam Deck (Proton / Wine)
+ReviANGLE supports Linux / Steam Deck via Proton:
+1. Extract the ZIP files into your GD folder next to `GeometryDash.exe`.
+2. In Steam, right-click **Geometry Dash ➔ Properties ➔ Launch Options** and enter:
+   ```bash
+   WINEDLLOVERRIDES="opengl32=n,b" %command%
+   ```
+
 ### Configure
 
 Run **`gd-angle-editor.exe`** for a GUI:
