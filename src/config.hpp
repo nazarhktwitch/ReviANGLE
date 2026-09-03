@@ -23,7 +23,7 @@ struct Config {
   bool power_boost = true;
 
   // BoostAdvanced
-  bool tex_compress = true;
+  bool tex_compress = false; // off by default - DXT1 destroys font alpha gradients (for megahack)
   bool nvapi_profile = true;
   bool shader_cache = true;
   std::string shader_cache_dir = "shader_cache";
