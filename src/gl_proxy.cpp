@@ -937,28 +937,6 @@ extern "C" __declspec(dllexport) void WINAPI gl_glGenerateMipmap(GLenum t) {
 }
 
 extern "C" __declspec(dllexport) void WINAPI
-gl_glCopyTexImage2D(GLenum target, GLint level, GLenum internalformat, GLint x,
-                    GLint y, GLsizei width, GLsizei height, GLint border) {
-  static auto real =
-      (void(WINAPI *)(GLenum, GLint, GLenum, GLint, GLint, GLsizei, GLsizei,
-                      GLint))GetProcAddress(GetModuleHandleA("libGLESv2.dll"),
-                                            "glCopyTexImage2D");
-  if (real)
-    real(target, level, internalformat, x, y, width, height, border);
-}
-
-extern "C" __declspec(dllexport) void WINAPI
-gl_glCopyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
-                       GLint x, GLint y, GLsizei width, GLsizei height) {
-  static auto real =
-      (void(WINAPI *)(GLenum, GLint, GLint, GLint, GLint, GLint, GLsizei,
-                      GLsizei))GetProcAddress(GetModuleHandleA("libGLESv2.dll"),
-                                              "glCopyTexSubImage2D");
-  if (real)
-    real(target, level, xoffset, yoffset, x, y, width, height);
-}
-
-extern "C" __declspec(dllexport) void WINAPI
 gl_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format,
                 GLenum type, void *pixels) {
   static auto real =
