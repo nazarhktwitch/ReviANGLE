@@ -688,13 +688,6 @@ extern "C" __declspec(dllexport) void WINAPI gl_glPixelStorei(GLenum pname,
   static PFN_PSI p = nullptr;
   if (!p)
     p = (PFN_PSI)glproxy::resolve("glPixelStorei");
-  thread_local GLenum pnames[64] = {};
-  thread_local GLint params[64] = {};
-  unsigned slot = pname & 0x3F;
-  if (pnames[slot] == pname && params[slot] == param)
-    return;
-  pnames[slot] = pname;
-  params[slot] = param;
   if (p)
     p(pname, param);
 }
