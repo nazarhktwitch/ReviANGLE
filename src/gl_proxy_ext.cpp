@@ -576,10 +576,12 @@ gl_glShaderSource(GLuint shader, GLsizei count, const GLchar *const *string,
     // Case 1: no #version - legacy cocos2d-x style. Prepend ES 1.00 +
     // precision, then the original source as-is.
     std::string prefix = "#version 100\n";
-    if (isFragment)
+    if (isFragment) {
+      prefix += "#extension GL_OES_standard_derivatives : enable\n";
       prefix += "precision mediump float;\nprecision mediump int;\n";
-    else
+    } else {
       prefix += "precision mediump int;\n";
+    }
     patched = prefix + src;
   } else {
     // Case 2: source has #version. Find the end of that line.
@@ -604,9 +606,15 @@ gl_glShaderSource(GLuint shader, GLsizei count, const GLchar *const *string,
     if (isEs) {
       // Already ES - leave alone (100, 300 es, 310 es, 320 es)
       newVerLine = verLine;
+      if (verNum == 100 && isFragment) {
+        newVerLine += "\n#extension GL_OES_standard_derivatives : enable";
+      }
     } else if (verNum <= 120) {
       // Desktop 1.1x - uses attribute/varying, maps to ES 1.00
       newVerLine = "#version 100";
+      if (isFragment) {
+        newVerLine += "\n#extension GL_OES_standard_derivatives : enable";
+      }
     } else {
       // Desktop 1.30+ / 3.30+ - uses in/out, maps to ES 3.00
       newVerLine = "#version 300 es";
