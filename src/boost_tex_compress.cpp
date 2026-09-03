@@ -35,18 +35,18 @@ static void WINAPI hookedTexImage2D(GLenum target, GLint level, GLint internalfo
         type == GL_UNSIGNED_BYTE && pixels &&
         width >= 16 && height >= 16 && (width & 3) == 0 && (height & 3) == 0)
     {
-        // Don't compress font atlases or transparent UI sprites (partial alpha)
+        // Don't compress font atlases or transparent UI sprites (any alpha < 255)
         const uint8_t* p = (const uint8_t*)pixels;
         size_t total = (size_t)width * height * 4;
-        bool hasPartialAlpha = false;
-        for (size_t i = 3; i < total; i += 16) { // sample alpha channel
+        bool hasTransparency = false;
+        for (size_t i = 3; i < total; i += 4) { // check alpha channel of every pixel
             uint8_t a = p[i];
-            if (a > 0 && a < 255) {
-                hasPartialAlpha = true;
+            if (a < 255) {
+                hasTransparency = true;
                 break;
             }
         }
-        if (hasPartialAlpha) {
+        if (hasTransparency) {
             if (s_origTexImage2D) s_origTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
             return;
         }
