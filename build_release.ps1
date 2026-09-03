@@ -6,7 +6,7 @@ param (
 $ErrorActionPreference = "Stop"
 
 Write-Host "==================================================" -ForegroundColor Cyan
-Write-Host " Building ReviANGLE Release $Version (Local)" -ForegroundColor Cyan
+Write-Host " Building ReviANGLE Release $Version" -ForegroundColor Cyan
 Write-Host "==================================================" -ForegroundColor Cyan
 
 # 1. Build DX11
