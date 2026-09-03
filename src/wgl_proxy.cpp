@@ -20,6 +20,7 @@ static bool g_glInitDone = false;
 // forward decls at global scope (extern "C" linkage cannot be in function bodies)
 extern "C" bool gdangle_shouldSkipPresent();
 extern "C" void gdangle_invalidateAllStateCaches();
+extern "C" void gdangle_invalidateProxyStateCaches();
 
 extern "C" unsigned long long gdangle_getDrawArraysCount();
 extern "C" unsigned long long gdangle_getDrawElementsCount();
@@ -417,6 +418,9 @@ BOOL WINAPI wgl_wglSwapBuffers(HDC hdc) {
     } else {
         ok = a.eglSwapBuffers(a.display, fc->surface) ? TRUE : FALSE;
     }
+
+    // Мégahack: invalidate frame-local GL state caches at frame boundary
+    gdangle_invalidateProxyStateCaches();
 
     // FPS / profile sampler: per-second snapshot to fps_log.csv.
     // Microfreeze-safe: persistent FILE* (no per-second fopen/fclose hitch),

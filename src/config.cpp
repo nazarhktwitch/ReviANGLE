@@ -234,6 +234,10 @@ void Config::load(const char* path) {
             else if (key == "workingset_lock") workingset_lock = parseBool(val);
             else if (key == "gpu_thread_prio") gpu_thread_prio = parseBool(val);
             else if (key == "present_skip_idle") present_skip_idle = parseBool(val);
+        } else if (section == "Megahack") {
+            if      (key == "megahack_detected")        megahack_detected        = parseBool(val);
+            else if (key == "mod_loader_detected")      mod_loader_detected      = parseBool(val);
+            else if (key == "megahack_force_fbo0_on_swap") megahack_force_fbo0_on_swap = parseBool(val);
         }
     }
 }
