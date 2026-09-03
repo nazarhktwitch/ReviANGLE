@@ -21,8 +21,8 @@ This directory contains pre-compiled ANGLE libraries, Vulkan loader, D3DCompiler
 
 The primary project binaries:
 1. `opengl32.dll` (Core ReviANGLE proxy layer)
-2. `ReviANGLE-Uninstall.exe` (Modern uninstaller GUI)
-3. `gd-angle-editor.exe` (Configuration editor GUI)
+2. `ReviANGLE-Uninstall.exe` (GUI uninstaller)
+3. `gd-angle-editor.exe` (GUI config editor)
 
 Are **compiled from scratch from open source code** in this repository during automated GitHub Actions CI/CD builds.
 

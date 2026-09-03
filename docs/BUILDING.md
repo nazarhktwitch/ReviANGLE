@@ -110,7 +110,7 @@ To test the actual mod in Geometry Dash, see [`INSTALLATION.md`](INSTALLATION.md
 |--------------|--------|-------------|
 | `opengl32` | `opengl32.dll` | Core proxy DLL |
 | `gd_angle_editor` | `gd-angle-editor.exe` | GUI configurator for config options |
-| `ReviANGLE-Uninstall` | `ReviANGLE-Uninstall.exe` | Auto-detecting uninstaller with modern GUI |
+| `ReviANGLE-Uninstall` | `ReviANGLE-Uninstall.exe` | Uninstaller |
 | `ini_round_trip_test` | `ini_round_trip_test.exe` | Validates INI parser preserves formatting |
 | `ALL` (default) | all 4 | Build everything |
 
