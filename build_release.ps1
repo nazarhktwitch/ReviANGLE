@@ -9,6 +9,10 @@ Write-Host "==================================================" -ForegroundColor
 Write-Host " Building ReviANGLE Release $Version" -ForegroundColor Cyan
 Write-Host "==================================================" -ForegroundColor Cyan
 
+# Clean stale build caches if present
+if (Test-Path "build_dx11") { Remove-Item "build_dx11" -Recurse -Force -ErrorAction SilentlyContinue }
+if (Test-Path "build_vulkan") { Remove-Item "build_vulkan" -Recurse -Force -ErrorAction SilentlyContinue }
+
 # 1. Build DX11
 Write-Host "`n[1/4] Compiling DirectX 11 backend..." -ForegroundColor Yellow
 cmake -B build_dx11 -A x64 -DCMAKE_BUILD_TYPE=Release -DREVIANGLE_BACKEND_D3D11=ON -DREVIANGLE_BACKEND_VULKAN=OFF
