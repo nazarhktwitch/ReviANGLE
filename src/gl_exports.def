@@ -68,6 +68,10 @@ EXPORTS
     glCompressedTexImage2D = gl_glCompressedTexImage2D
     glGenerateMipmap       = gl_glGenerateMipmap
     glGetStringi           = gl_glGetStringi
+    glPushAttrib            = gl_glPushAttrib
+    glPopAttrib             = gl_glPopAttrib
+    glPushClientAttrib      = gl_glPushClientAttrib
+    glPopClientAttrib       = gl_glPopClientAttrib
 
     ; --- GL 2.0+ / GLES 3.0 wrappers (defined in gl_proxy_ext.cpp) ---
     glReadBuffer              = gl_glReadBuffer
