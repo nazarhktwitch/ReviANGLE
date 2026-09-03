@@ -1,0 +1,148 @@
+name: ReviANGLE CI & Release Packaging
+
+on:
+  push:
+    branches: [main, dev]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  CMAKE_GENERATOR: "Visual Studio 17 2022"
+
+jobs:
+  build:
+    name: Build (x64 Release)
+    runs-on: windows-2022
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up MSVC Environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Configure DX11 Backend (CMake)
+        run: cmake -B build_dx11 -A x64 -DCMAKE_BUILD_TYPE=Release -DREVIANGLE_BACKEND_D3D11=ON -DREVIANGLE_BACKEND_VULKAN=OFF
+
+      - name: Build DX11 Binaries
+        run: cmake --build build_dx11 --config Release --parallel
+
+      - name: Configure Vulkan Backend (CMake)
+        run: cmake -B build_vulkan -A x64 -DCMAKE_BUILD_TYPE=Release -DREVIANGLE_BACKEND_D3D11=OFF -DREVIANGLE_BACKEND_VULKAN=ON
+
+      - name: Build Vulkan Binaries
+        run: cmake --build build_vulkan --config Release --parallel
+
+      - name: Run INI Parser Tests
+        run: |
+          $testExe = Get-ChildItem -Path build_dx11 -Recurse -Filter "ini_round_trip_test.exe" | Select-Object -First 1
+          if ($testExe) {
+            & $testExe.FullName examples_config/angle_config.default-safe.ini
+          }
+        shell: pwsh
+
+      - name: Assemble Release Artifacts
+        run: |
+          New-Item -ItemType Directory -Force -Path artifacts/dx11 | Out-Null
+          New-Item -ItemType Directory -Force -Path artifacts/vulkan | Out-Null
+
+          # Copy DX11 compiled binaries (built from source)
+          (Get-ChildItem -Path build_dx11 -Recurse -Filter "opengl32.dll" | Select-Object -First 1).FullName | Copy-Item -Destination artifacts/dx11/
+          (Get-ChildItem -Path build_dx11 -Recurse -Filter "gd-angle-editor.exe" | Select-Object -First 1).FullName | Copy-Item -Destination artifacts/dx11/
+          (Get-ChildItem -Path build_dx11 -Recurse -Filter "ReviANGLE-Uninstall.exe" | Select-Object -First 1).FullName | Copy-Item -Destination artifacts/dx11/
+
+          # Copy DX11 prebuilt dependencies & configs
+          Copy-Item deps/dx11/* artifacts/dx11/ -Force
+          Copy-Item LICENSE artifacts/dx11/
+          Copy-Item README.md artifacts/dx11/
+
+          # Copy Vulkan compiled binaries (built from source)
+          (Get-ChildItem -Path build_vulkan -Recurse -Filter "opengl32.dll" | Select-Object -First 1).FullName | Copy-Item -Destination artifacts/vulkan/
+          (Get-ChildItem -Path build_vulkan -Recurse -Filter "gd-angle-editor.exe" | Select-Object -First 1).FullName | Copy-Item -Destination artifacts/vulkan/
+          (Get-ChildItem -Path build_vulkan -Recurse -Filter "ReviANGLE-Uninstall.exe" | Select-Object -First 1).FullName | Copy-Item -Destination artifacts/vulkan/
+
+          # Copy Vulkan prebuilt dependencies & configs
+          Copy-Item deps/vulkan/* artifacts/vulkan/ -Force
+          Copy-Item LICENSE artifacts/vulkan/
+          Copy-Item README.md artifacts/vulkan/
+
+          Get-ChildItem artifacts -Recurse | Format-Table Name, Length
+        shell: pwsh
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ReviANGLE-build-${{ github.sha }}
+          path: artifacts/
+          retention-days: 30
+
+  release:
+    name: Publish GitHub Release
+    runs-on: windows-2022
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ReviANGLE-build-${{ github.sha }}
+          path: release/
+
+      - name: Package Release Archives
+        run: |
+          $version = "${{ github.ref_name }}"
+          Compress-Archive -Path release/dx11/* -DestinationPath "ReviANGLE-$version-DX11.zip" -Force
+          Compress-Archive -Path release/vulkan/* -DestinationPath "ReviANGLE-$version-Vulkan.zip" -Force
+          Get-Item "ReviANGLE-$version-DX11.zip" | Select-Object Name, Length
+          Get-Item "ReviANGLE-$version-Vulkan.zip" | Select-Object Name, Length
+        shell: pwsh
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ReviANGLE-${{ github.ref_name }}-DX11.zip
+            ReviANGLE-${{ github.ref_name }}-Vulkan.zip
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+          name: ReviANGLE ${{ github.ref_name }}
+          body: |
+            ## ReviANGLE ${{ github.ref_name }}
+
+            **Active Fork** with simultaneous DirectX 11 and Vulkan backend support.
+
+            ---
+
+            ### Downloads
+
+            Choose the appropriate build for your graphics card:
+
+            | Build | Backend | Supported GPUs | Features |
+            |-------|---------|----------------|----------|
+            | **`ReviANGLE-${{ github.ref_name }}-DX11.zip`** | DirectX 11 | All GPUs (NVIDIA, AMD, Intel) | Maximum stability |
+            | **`ReviANGLE-${{ github.ref_name }}-Vulkan.zip`** | Vulkan | Modern GPUs (RTX, Radeon RX, Intel Arc) | Vulkan API backend |
+
+            ---
+
+            ### Installation
+
+            1. Download the ZIP file for your target backend.
+            2. Extract all contents directly into your Geometry Dash folder (where `GeometryDash.exe` is located).
+            3. Launch Geometry Dash or use `gd-angle-editor.exe` to adjust performance settings.
