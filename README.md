@@ -141,7 +141,8 @@ Prebuilt ANGLE dependencies are staged under `deps/dx11` and `deps/vulkan`.
 | Geometry Dash 2.2 (Steam, standalone) | ✅ tested |
 | MegaHack | ✅ tested (compatible) |
 | Eclipse Menu | ✅ tested (compatible) |
-| Mac / Linux | ❌ Windows-only |
+| Linux | ✅ Supported via Proton / Wine |
+| Mac OS | ❌ Too much work... |
 
 ### Credits & acknowledgements
 
