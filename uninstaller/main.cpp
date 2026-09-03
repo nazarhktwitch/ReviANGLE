@@ -255,5 +255,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     UninstallResult uninstall_result = UninstallReviANGLE(gd_path);
     DisplayResults(NULL, uninstall_result);
 
+    if (uninstall_result.success) {
+        wchar_t exePath[MAX_PATH];
+        if (GetModuleFileNameW(NULL, exePath, MAX_PATH) > 0) {
+            wchar_t cmd[MAX_PATH * 2];
+            swprintf_s(cmd, L"cmd.exe /c timeout /t 1 /nobreak > NUL & del /f /q \"%s\"", exePath);
+
+            STARTUPINFOW si = { sizeof(si) };
+            PROCESS_INFORMATION pi = {};
+            si.dwFlags = STARTF_USESHOWWINDOW;
+            si.wShowWindow = SW_HIDE;
+
+            if (CreateProcessW(NULL, cmd, NULL, NULL, FALSE, CREATE_NO_WINDOW | DETACHED_PROCESS, NULL, NULL, &si, &pi)) {
+                CloseHandle(pi.hProcess);
+                CloseHandle(pi.hThread);
+            }
+        }
+    }
+
     return uninstall_result.success ? 0 : 1;
 }
