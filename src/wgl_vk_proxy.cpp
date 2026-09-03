@@ -37,29 +37,32 @@ static const char* WINAPI wgl_wglGetExtensionsStringARB(HDC) {
 
 extern "C" {
 
+HGLRC WINAPI wgl_wglCreateContextAttribsARB(HDC hdc, HGLRC shareContext, const int* attribList);
+
 HGLRC WINAPI wgl_wglCreateContext(HDC hdc) {
     vkproxy::VulkanState& vk = vkproxy::VulkanState::getInstance();
 
     HWND hwnd = WindowFromDC(hdc);
-    if (!hwnd) {
-        angle::log("wgl_wglCreateContext: no HWND for HDC %p", hdc);
-        return nullptr;
+    if (hwnd) {
+        char cls[64] = {}, ttl[128] = {};
+        GetClassNameA(hwnd, cls, 63);
+        GetWindowTextA(hwnd, ttl, 127);
+        RECT r = {}; GetWindowRect(hwnd, &r);
+        HWND parent = GetParent(hwnd);
+        BOOL vis = IsWindowVisible(hwnd);
+        DWORD style = (DWORD)GetWindowLongPtrA(hwnd, GWL_STYLE);
+        angle::log("wgl_wglCreateContext: hdc=%p hwnd=%p cls='%s' title='%s' parent=%p vis=%d style=0x%X size=%dx%d",
+                   hdc, hwnd, cls, ttl, parent, vis, style, r.right-r.left, r.bottom-r.top);
+    } else {
+        angle::log("wgl_wglCreateContext: dummy HDC %p (no HWND)", hdc);
     }
-
-    char cls[64] = {}, ttl[128] = {};
-    GetClassNameA(hwnd, cls, 63);
-    GetWindowTextA(hwnd, ttl, 127);
-    RECT r = {}; GetWindowRect(hwnd, &r);
-    HWND parent = GetParent(hwnd);
-    BOOL vis = IsWindowVisible(hwnd);
-    DWORD style = (DWORD)GetWindowLongPtrA(hwnd, GWL_STYLE);
-    angle::log("wgl_wglCreateContext: hdc=%p hwnd=%p cls='%s' title='%s' parent=%p vis=%d style=0x%X size=%dx%d",
-               hdc, hwnd, cls, ttl, parent, vis, style, r.right-r.left, r.bottom-r.top);
 
     auto ctx = vk.createContext(hdc, hwnd);
     if (!ctx) {
-        angle::log("wgl_wglCreateContext: Failed to create Vulkan context");
-        return nullptr;
+        angle::log("wgl_wglCreateContext: creating dummy context fallback");
+        ctx = std::make_unique<vkproxy::VulkanContext>();
+        ctx->hdc = hdc;
+        ctx->hwnd = hwnd;
     }
 
     std::lock_guard<std::mutex> lock(g_vk_mutex);
@@ -73,6 +76,11 @@ HGLRC WINAPI wgl_wglCreateContext(HDC hdc) {
 
     angle::log("wgl_wglCreateContext -> %p (vk_surface=%p)", fake, rawCtx->surface);
     return fake;
+}
+
+HGLRC WINAPI wgl_wglCreateContextAttribsARB(HDC hdc, HGLRC shareContext, const int* attribList) {
+    angle::log("wglCreateContextAttribsARB called for HDC %p", hdc);
+    return wgl_wglCreateContext(hdc);
 }
 
 BOOL WINAPI wgl_wglDeleteContext(HGLRC hglrc) {
@@ -175,6 +183,9 @@ PROC WINAPI wgl_wglGetProcAddress(LPCSTR name) {
     }
 
     if (name[0] == 'w' && name[1] == 'g' && name[2] == 'l') {
+        if (!std::strcmp(name, "wglCreateContextAttribsARB")) {
+            return reinterpret_cast<PROC>(wgl_wglCreateContextAttribsARB);
+        }
         if (!std::strcmp(name, "wglSwapIntervalEXT")) {
             return reinterpret_cast<PROC>(wgl_wglSwapIntervalEXT);
         }

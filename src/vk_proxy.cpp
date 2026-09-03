@@ -170,7 +170,12 @@ std::unique_ptr<VulkanContext> VulkanState::createContext(HDC hdc, HWND hwnd) {
 
     if (vkCreateCommandPool(device, &poolInfo, nullptr, &ctx->cmdPool) != VK_SUCCESS) {
         angle::log("vk_proxy: Failed to create command pool");
-        return nullptr;
+        return ctx;
+    }
+
+    if (!hwnd) {
+        angle::log("vk_proxy: Dummy Vulkan context created (no HWND)");
+        return ctx;
     }
 
     // Create Windows surface using vkCreateWin32SurfaceKHR
@@ -185,14 +190,12 @@ std::unique_ptr<VulkanContext> VulkanState::createContext(HDC hdc, HWND hwnd) {
 
     if (!vkCreateWin32SurfaceKHR) {
         angle::log("vk_proxy: vkCreateWin32SurfaceKHR not available");
-        vkDestroyCommandPool(device, ctx->cmdPool, nullptr);
-        return nullptr;
+        return ctx;
     }
 
     if (vkCreateWin32SurfaceKHR(instance, &surfaceCreateInfo, nullptr, &ctx->surface) != VK_SUCCESS) {
-        angle::log("vk_proxy: Failed to create Win32 surface");
-        vkDestroyCommandPool(device, ctx->cmdPool, nullptr);
-        return nullptr;
+        angle::log("vk_proxy: Failed to create Win32 surface for hwnd %p", hwnd);
+        return ctx;
     }
 
     // Create swapchain
@@ -219,10 +222,8 @@ std::unique_ptr<VulkanContext> VulkanState::createContext(HDC hdc, HWND hwnd) {
     swapchainCreateInfo.clipped = VK_TRUE;
 
     if (vkCreateSwapchainKHR(device, &swapchainCreateInfo, nullptr, &ctx->swapchain) != VK_SUCCESS) {
-        angle::log("vk_proxy: Failed to create swapchain");
-        vkDestroySurfaceKHR(instance, ctx->surface, nullptr);
-        vkDestroyCommandPool(device, ctx->cmdPool, nullptr);
-        return nullptr;
+        angle::log("vk_proxy: Failed to create swapchain for hwnd %p", hwnd);
+        return ctx;
     }
 
     // Get swapchain images

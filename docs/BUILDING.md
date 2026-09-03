@@ -4,7 +4,7 @@
 
 | Tool | Minimum version | Notes |
 |------|-----------------|-------|
-| **Windows** | 10 (any build) | Windows 7/8 untested; some Win10-specific APIs degrade gracefully |
+| **Windows** | 11/10 (any build) | Windows 7/8 untested; some Win10-specific APIs degrade gracefully |
 | **Visual Studio 2022** | 17.0 | Community edition is fine. Need **"Desktop development with C++"** workload. |
 | **CMake** | 3.20+ | Bundled with VS or [download](https://cmake.org/download/) |
 | **Git** | any | For cloning |
@@ -14,112 +14,132 @@
 ## Step 1 - Clone
 
 ```powershell
-git clone https://github.com/Reviusion/ReviANGLE.git
+git clone https://github.com/nazarhktwitch/ReviANGLE.git
 cd ReviANGLE
 ```
 
-## Step 2 - Get ANGLE prebuilts
+## Step 2 - Get ANGLE prebuilts & Dependencies
 
-The ANGLE library (`libEGL.dll`, `libGLESv2.dll`, `d3dcompiler_47.dll`) is **not** part of this repo - those binaries are large and have their own license. Three options:
+The ANGLE backend libraries (`libEGL.dll`, `libGLESv2.dll`, `vulkan-1.dll`, `d3dcompiler_47.dll`) are stored under `deps/` in the repository for convenient release packaging:
 
-### Option A - copy from a release ZIP (easiest)
+- `deps/dx11/` - Dependencies for DirectX 11 backend
+- `deps/vulkan/` - Dependencies for Vulkan backend
 
-Download the latest release from [Releases](https://github.com/Reviusion/ReviANGLE/releases), unzip, and copy:
-```
-libEGL.dll
-libGLESv2.dll
-d3dcompiler_47.dll
-```
-into a folder you'll later use for testing. (Build output doesn't depend on these - they're loaded at runtime.)
+### Option A - Use repository prebuilts from `deps/` (easiest)
 
-### Option B - extract from Chromium / Edge
+Simply leave the prebuilts in `deps/dx11/` or `deps/vulkan/`. The automated build script (`build_release.ps1`) and CI/CD workflow will automatically package them with your built binaries.
 
-ANGLE is bundled with Chromium-based browsers. You can copy the three DLLs from:
-```
+### ~~Option B - extract from Chromium / Edge~~ `[Deprecated]`
+
+~~ANGLE is bundled with Chromium-based browsers. You can copy the three DLLs from:~~
+
+```text
 C:\Program Files (x86)\Microsoft\Edge\Application\<version>\
 C:\Program Files\Google\Chrome\Application\<version>\
 ```
+
+> **Note**: Vulkan is NOT SUPPORTED by these DLLs, so now to use Vulkan release you NEED to build it or extract pre-built from release or `deps/`.
 
 ### Option C - build ANGLE from source
 
 See [ANGLE's official build instructions](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/doc/DevSetup.md). This is a multi-hour process and **not recommended** unless you specifically need a custom ANGLE build.
 
-## Step 3 - Configure & build
+---
+
+## Step 3 - Configure & Build
+
+### Automated Local Release Packaging (Recommended)
+
+To build both **DirectX 11** and **Vulkan** releases and package them into ZIP archives automatically, run:
 
 ```powershell
-# from the repo root
-cmake -B build -A x64 -DCMAKE_BUILD_TYPE=Release
-cmake --build build --config Release
+.\build_release.ps1 -Version "vX.X.X" # Change "vX.X.X" to your desired version
 ```
 
-After build, you'll have:
+This generates `ReviANGLE-v1.1.0-DX11.zip` and `ReviANGLE-v1.1.0-Vulkan.zip` in the project root.
+
+---
+
+### Manual CMake Build Commands
+
+#### Build DirectX 11 Backend:
+
+```powershell
+cmake -B build_dx11 -A x64 -DREVIANGLE_BACKEND_D3D11=ON -DREVIANGLE_BACKEND_VULKAN=OFF
+cmake --build build_dx11 --config Release
 ```
-build/Release/
-├── opengl32.dll              ← the proxy (drop this into GD folder)
-├── opengl32.lib              ← intermediate
-├── opengl32.exp              ← intermediate
-├── gd-angle-editor.exe       ← GUI configurator
-├── ReviANGLE-Uninstall.exe   ← uninstaller with modern GUI
-└── ini_round_trip_test.exe   ← internal test (optional)
+
+#### Build Vulkan Backend:
+
+```powershell
+cmake -B build_vulkan -A x64 -DREVIANGLE_BACKEND_D3D11=OFF -DREVIANGLE_BACKEND_VULKAN=ON
+cmake --build build_vulkan --config Release
 ```
+
+### Build Artifact Locations
+
+After build, the output binaries will be generated in:
+
+```text
+build_dx11/ (or build_vulkan/)
+├── dll/Release/
+│   ├── opengl32.dll              ← core proxy DLL
+│   ├── gd-angle-editor.exe       ← configurator app
+│   └── ini_round_trip_test.exe   ← internal INI parser test
+└── bin/Release/
+    └── ReviANGLE-Uninstall.exe   ← uninstaller
+```
+
+---
 
 ## Step 4 - Test the build
 
 ```powershell
 # Quick verify build artifacts exist & link is clean:
-& build\Release\ini_round_trip_test.exe   # should exit 0 with "ROUND-TRIP OK"
-& build\Release\gd-angle-editor.exe       # should open ReviANGLE Studio window
+& build_dx11\dll\Release\ini_round_trip_test.exe examples_config\angle_config.default-safe.ini  # should exit 0
+& build_dx11\dll\Release\gd-angle-editor.exe                                                  # should open Studio window
 ```
 
-To test the actual mod, see [`INSTALLATION.md`](INSTALLATION.md).
+To test the actual mod in Geometry Dash, see [`INSTALLATION.md`](INSTALLATION.md).
+
+---
 
 ## Build targets
 
 | CMake target | Output | Description |
 |--------------|--------|-------------|
-| `opengl32` | `opengl32.dll` | The actual proxy mod |
+| `opengl32` | `opengl32.dll` | Core proxy DLL |
 | `gd_angle_editor` | `gd-angle-editor.exe` | GUI configurator for config options |
 | `ReviANGLE-Uninstall` | `ReviANGLE-Uninstall.exe` | Auto-detecting uninstaller with modern GUI |
 | `ini_round_trip_test` | `ini_round_trip_test.exe` | Validates INI parser preserves formatting |
 | `ALL` (default) | all 4 | Build everything |
 
-Build a single target with `cmake --build build --config Release --target ReviANGLE-Uninstall`.
+Build a single target with `cmake --build build_dx11 --config Release --target ReviANGLE-Uninstall`.
+
+---
 
 ## Common build issues
 
 ### `error LNK2019: unresolved external symbol __imp_*`
 
-Wrong architecture for the GD version you're targeting. GD 2.2+ is x64; older builds were x86. Re-run cmake with the correct flag:
+Wrong architecture for the GD version you're targeting. GD 2.2+ is x64. Re-run cmake with the x64 architecture flag:
 ```powershell
-Remove-Item -Recurse -Force build
-cmake -B build -A x64       # for GD 2.2+ (default)
-# or:
-cmake -B build -A Win32     # for GD 2.1 / older
-cmake --build build --config Release
+Remove-Item -Recurse -Force build_dx11, build_vulkan
+cmake -B build_dx11 -A x64 -DREVIANGLE_BACKEND_D3D11=ON -DREVIANGLE_BACKEND_VULKAN=OFF
+cmake --build build_dx11 --config Release
 ```
-
-### `Cannot open include file: 'imgui.h'`
-
-The configurator depends on Dear ImGui, which is fetched as part of the build. If CMake's `FetchContent` fails (firewall, etc.), check `build/_deps/imgui-src/` exists.
 
 ### `cmake: command not found`
 
-CMake isn't on PATH. Either install [CMake](https://cmake.org/download/) and reboot, or use the version bundled with VS 2022:
+CMake isn't on PATH. Either install [CMake](https://cmake.org/download/) or use Developer PowerShell for VS 2022:
 ```powershell
-& "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -B build -A x64
+& "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -B build_dx11 -A x64
 ```
 
-### Build succeeds but `opengl32.dll` is 0 KB
+---
 
-You probably ran cmake without specifying a generator, and it picked something incompatible. Force the VS generator:
-```powershell
-cmake -B build -A x64 -G "Visual Studio 17 2022"
-```
+## Continuous Integration & Automated Releases
 
-### NVAPI link errors
+`.github/workflows/release.yml` automatically builds both **DirectX 11** and **Vulkan** release targets on every push to `main`/`dev` or when a version tag (e.g., `v1.1.0`) is pushed to GitHub.
 
-The mod loads NVAPI dynamically at runtime via `LoadLibraryA("nvapi.dll")` - you should **not** be linking `nvapi.lib` at build time. If you see NVAPI link errors, check `boost_nvapi.cpp` is the only file referencing NVAPI symbols and uses dynamic loading.
-
-## Continuous integration
-
-`.github/workflows/build.yml` runs the build on every push. See the [Actions tab](https://github.com/Reviusion/ReviANGLE/actions) for the latest build status. CI artifacts are attached to each successful run - useful if you want a build without running the toolchain locally.
+CI artifacts and GitHub Release ZIP packages are attached automatically to the release page.

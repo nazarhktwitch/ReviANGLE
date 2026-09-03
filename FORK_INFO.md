@@ -1,128 +1,75 @@
 # About This ReviANGLE Fork
 
-This is an **active fork** of the original [ReviANGLE](https://github.com/Reviusion/ReviANGLE) project by Reviusion, maintained to add and support **simultaneous DirectX 11 and Vulkan backends**.
+This is an **active fork** of the original [ReviANGLE](https://github.com/Reviusion/ReviANGLE) project by Reviusion, maintained to support **simultaneous DirectX 11 and Vulkan backends** (also with CI/CD builds now!).
 
 ## What Changed
 
 ### Core Additions
 
-**1. Vulkan Backend Support**
-- Full Vulkan rendering pipeline implemented alongside DirectX 11
-- ANGLE DLLs (`libEGL.dll`, `libGLESv2.dll`) compiled separately from ANGLE source to include Vulkan support
-- Separate build targets for DX11-only and Vulkan-only configurations
-- Zero performance penalty - choose the backend at build time
+**1. Vulkan Backend Support & MegaHack Compatibility**
+- Full Vulkan rendering pipeline implemented alongside DirectX 11.
+- Restored legacy OpenGL 1.1 exports and state tracking proxy (`glPushAttrib` / `glPopAttrib` attribute stack) to fix MegaHack overlay drawing & crashes.
+- Statically separate build targets for DX11 (`D3D11`) and Vulkan configurations.
 
-**2. Modern Uninstaller**
-- New `ReviANGLE-Uninstall.exe` tool with GUI
-- Auto-detects Geometry Dash installation (Steam, Epic Games, or manual)
-- Safely removes all mod files and caches
-- Restores original `opengl32.dll.backup` if present
-- Dual-backend aware (removes both DX11 and Vulkan DLLs as needed)
-- Original uninstaller lacked source code and Vulkan support
+**2. Automated CI/CD Release Pipeline**
+- Automated GitHub Actions workflow (`.github/workflows/release.yml`) builds `opengl32.dll`, `gd-angle-editor.exe`, and `ReviANGLE-Uninstall.exe` from source on version tags (`v*`).
+- Dependency staging via `deps/dx11` and `deps/vulkan`.
+- Prebuilt third-party ANGLE DLLs are kept in `deps/` while core project files are compiled live in CI for transparency.
 
-**3. Updated Documentation**
-- Clarified DirectX 11 vs Vulkan backend selection for end users
-- Installation instructions for both backends
-- Troubleshooting specific to each backend
-- Build instructions for compiling both variants
+**3. Automated Local Packaging Script**
+- A PowerShell packaging script (`build_release.ps1`) to compile both DX11 and Vulkan builds locally and create release ZIP archives in one command.
 
-**4. Configuration Updates**
-- `angle_config.ini` now documents both backend options clearly
-- GUI configurator (`gd-angle-editor.exe`) supports backend selection
+**4. Uninstaller**
+- `ReviANGLE-Uninstall.exe` tool with GUI.
+- Auto-detects Geometry Dash installation.
+- Safely removes all mod files and caches, restoring backup DLLs if present.
 
-## Upstream Synchronization
-
-The original ReviANGLE repository remains **actively monitored**. As updates are released upstream, they will be:
-
-1. **Analyzed** for compatibility with Vulkan implementation
-2. **Merged** into this fork with proper attribution
-3. **Tested** on both backends before release
-4. **Released** as new versions maintaining fork features
+---
 
 ## Building This Fork
 
 ### Prerequisites
 - Visual Studio 2022 (C++ workload)
 - CMake 3.20+
-- Windows 10+
+- Windows 10/11
 
-### Compile DirectX 11 build
+### Automated Local Build & Release Packaging
+
 ```powershell
 git clone https://github.com/nazarhktwitch/ReviANGLE.git
 cd ReviANGLE
-cmake -B build -A x64 -DREVIEWANGLE_BACKEND_D3D11=ON -DREVIEWANGLE_BACKEND_VULKAN=OFF
-cmake --build build --config Release
+.\build_release.ps1 -Version "v1.1.0" # Change version if needed!
 ```
 
-### Compile Vulkan build
+### Manual CMake Commands
+
+#### Compile DirectX 11 build
 ```powershell
-cmake -B build-vulkan -A x64 -DREVIEWANGLE_BACKEND_D3D11=OFF -DREVIEWANGLE_BACKEND_VULKAN=ON
-cmake --build build-vulkan --config Release
+cmake -B build_dx11 -A x64 -DREVIANGLE_BACKEND_D3D11=ON -DREVIANGLE_BACKEND_VULKAN=OFF
+cmake --build build_dx11 --config Release
 ```
 
-### Build outputs
-```
-build/Release/
-├── opengl32.dll           (DirectX 11 proxy)
-├── libEGL.dll             (ANGLE for DX11)
-├── libGLESv2.dll          (ANGLE for DX11)
-├── d3dcompiler_47.dll     (DirectX compiler)
-├── gd-angle-editor.exe    (GUI configurator)
-└── ReviANGLE-Uninstall.exe (uninstaller)
-
-build-vulkan/Release/
-├── opengl32.dll           (Vulkan proxy)
-├── libEGL.dll             (ANGLE for Vulkan)
-├── libGLESv2.dll          (ANGLE for Vulkan)
-├── vulkan-1.dll           (Vulkan runtime)
-├── gd-angle-editor.exe
-└── ReviANGLE-Uninstall.exe
+#### Compile Vulkan build
+```powershell
+cmake -B build_vulkan -A x64 -DREVIANGLE_BACKEND_D3D11=OFF -DREVIANGLE_BACKEND_VULKAN=ON
+cmake --build build_vulkan --config Release
 ```
 
-## Release Naming Convention
+### Build Output Locations
 
-- **DX11 builds**: `ReviANGLE-vX.Y.Z-DX11-win64.zip`
-- **Vulkan builds**: `ReviANGLE-vX.Y.Z-Vulkan-win64.zip`
-
-Each contains the appropriate DLLs for that backend.
-
-## Testing & Compatibility
-
-Tested on:
-- Intel integrated graphics (HD 630, UHD 730) with DirectX 11
-- NVIDIA GeForce GTX 1060+ with both backends
-- NVIDIA GeForce RTX 30-series with Vulkan
-- AMD Radeon RX 6000-series with Vulkan
-
-## Known Limitations & Considerations
-
-1. **Cannot run both backends simultaneously** - CMake enforces exactly one per build
-2. **ANGLE source code** - Not included in this repo; DLLs are pre-compiled binaries
-3. **Original author attribution** - Full credit to Reviusion for the base project
-4. **MIT License** - This fork maintains the same license as the original
-
-## Contributing
-
-Improvements to this fork are welcome:
-- Bug fixes for either backend
-- Documentation improvements
-- Uninstaller enhancements
-- Performance optimizations
-- Compatibility reports
-
-## License
-
-MIT - see [`LICENSE`](LICENSE)
-
-ANGLE library binaries are licensed under [BSD 3-Clause](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/LICENSE).
-
-## Credits
-
-- **Original ReviANGLE**: Reviusion ([@Reviusion](https://github.com/Reviusion))
-- **Vulkan backend & fork maintenance**: NazarHK ([@nazarhktwitch](https://github.com/nazarhktwitch))
-- **ANGLE**: Google Chromium team
-- **Dear ImGui**: Configurator GUI framework
+```text
+build_dx11/ (or build_vulkan/)
+├── dll/Release/
+│   ├── opengl32.dll              ← core proxy DLL
+│   ├── gd-angle-editor.exe       ← configurator
+│   └── ini_round_trip_test.exe   ← internal INI parser test
+└── bin/Release/
+    └── ReviANGLE-Uninstall.exe   ← uninstaller
+```
 
 ---
 
-**Note**: This is a community-maintained fork. For questions about the original project, refer to the [upstream repository](https://github.com/Reviusion/ReviANGLE).
+## Release Naming Convention
+
+- **DX11 builds**: `ReviANGLE-vX.Y.Z-DX11.zip`
+- **Vulkan builds**: `ReviANGLE-vX.Y.Z-Vulkan.zip`
