@@ -1,5 +1,7 @@
 # Example configurations
 
+> **Note:** Some configs are outdated (taken from og repo) and may not work (most visible for Vulkan backend)
+
 Pre-tuned `angle_config.ini` files for different use cases. Copy one of them next to `GeometryDash.exe` (renaming to `angle_config.ini`).
 
 ## `angle_config.default-safe.ini`

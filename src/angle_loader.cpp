@@ -118,6 +118,7 @@ static bool loadSymbols() {
   L(eglInitialize);
   L(eglChooseConfig);
   L(eglCreateWindowSurface);
+  L(eglCreatePbufferSurface);
   L(eglCreateContext);
   L(eglMakeCurrent);
   L(eglSwapBuffers);
@@ -146,6 +147,8 @@ static EGLDisplay_t openDisplayWithBackend(const std::string &backend) {
   EGLint_t platformType = EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE;
   if (backend == "d3d9") {
     platformType = EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE;
+  } else if (backend == "vulkan") {
+    platformType = 0x3450; // EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE
   }
 
   EGLint_t attribs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, platformType, EGL_NONE,

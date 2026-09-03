@@ -45,6 +45,8 @@ constexpr EGLint_t EGL_WINDOW_BIT = 0x0004;
 constexpr EGLint_t EGL_RENDERABLE_TYPE = 0x3040;
 constexpr EGLint_t EGL_OPENGL_ES2_BIT = 0x0004;
 constexpr EGLint_t EGL_NONE = 0x3038;
+constexpr EGLint_t EGL_WIDTH = 0x3057;
+constexpr EGLint_t EGL_HEIGHT = 0x3056;
 
 struct FakeContext {
   EGLContext_t eglCtx = nullptr;
@@ -96,12 +98,9 @@ HGLRC WINAPI wgl_wglCreateContext(HDC hdc) {
 
   HWND hwnd = WindowFromDC(hdc);
   if (!hwnd) {
-    SetLastError(ERROR_INVALID_WINDOW_HANDLE);
-    angle::log("wglCreateContext: no HWND for HDC %p", hdc);
-    return nullptr;
-  }
-  // Diagnose: log window class, title, parent, visibility, size
-  {
+    angle::log("wglCreateContext: dummy context requested (no HWND) for HDC %p", hdc);
+  } else {
+    // Diagnose: log window class, title, parent, visibility, size
     char cls[64] = {}, ttl[128] = {};
     GetClassNameA(hwnd, cls, 63);
     GetWindowTextA(hwnd, ttl, 127);
@@ -124,12 +123,21 @@ HGLRC WINAPI wgl_wglCreateContext(HDC hdc) {
     return nullptr;
   }
 
-  EGLint_t surfAttribs[] = {EGL_NONE, EGL_NONE};
-  EGLSurface_t surf =
-      a.eglCreateWindowSurface(a.display, cfg, hwnd, surfAttribs);
+  EGLSurface_t surf = nullptr;
+  if (!hwnd) {
+    EGLint_t pbufferAttribs[] = {
+        EGL_WIDTH, 1,
+        EGL_HEIGHT, 1,
+        EGL_NONE
+    };
+    surf = a.eglCreatePbufferSurface(a.display, cfg, pbufferAttribs);
+  } else {
+    EGLint_t surfAttribs[] = {EGL_NONE, EGL_NONE};
+    surf = a.eglCreateWindowSurface(a.display, cfg, hwnd, surfAttribs);
+  }
   if (!surf) {
     SetLastError(ERROR_INVALID_WINDOW_HANDLE);
-    angle::log("wglCreateContext: eglCreateWindowSurface failed: 0x%x",
+    angle::log("wglCreateContext: surface creation failed: 0x%x",
                a.eglGetError());
     return nullptr;
   }
@@ -182,6 +190,11 @@ HGLRC WINAPI wgl_wglCreateContext(HDC hdc) {
   angle::log("wglCreateContext -> %p (egl=%p surf=%p)", fake, ctx, surf);
   SetLastError(ERROR_SUCCESS);
   return fake;
+}
+
+HGLRC WINAPI wgl_wglCreateContextAttribsARB(HDC hdc, HGLRC shareContext, const int* attribList) {
+    angle::log("wglCreateContextAttribsARB called for HDC %p", hdc);
+    return wgl_wglCreateContext(hdc);
 }
 
 BOOL WINAPI wgl_wglDeleteContext(HGLRC hglrc) {
@@ -608,14 +621,6 @@ BOOL WINAPI wgl_wglSwapIntervalEXT(int interval) {
     interval = 0;
   }
   return a.eglSwapInterval(a.display, interval) ? TRUE : FALSE;
-}
-
-HGLRC WINAPI wgl_wglCreateContextAttribsARB(HDC hdc, HGLRC shareContext,
-                                            const int *attribList) {
-  (void)shareContext;
-  (void)attribList;
-  angle::log("wglCreateContextAttribsARB: forwarding to wglCreateContext");
-  return wgl_wglCreateContext(hdc);
 }
 
 // pixel format - we don't really negotiate, we just accept whatever GD asks

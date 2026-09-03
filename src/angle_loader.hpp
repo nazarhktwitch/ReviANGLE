@@ -21,6 +21,7 @@ namespace angle {
         EGLBoolean_t (*eglInitialize)(EGLDisplay_t, EGLint_t*, EGLint_t*) = nullptr;
         EGLBoolean_t (*eglChooseConfig)(EGLDisplay_t, const EGLint_t*, EGLConfig_t*, EGLint_t, EGLint_t*) = nullptr;
         EGLSurface_t (*eglCreateWindowSurface)(EGLDisplay_t, EGLConfig_t, HWND, const EGLint_t*) = nullptr;
+        EGLSurface_t (*eglCreatePbufferSurface)(EGLDisplay_t, EGLConfig_t, const EGLint_t*) = nullptr;
         EGLContext_t (*eglCreateContext)(EGLDisplay_t, EGLConfig_t, EGLContext_t, const EGLint_t*) = nullptr;
         EGLBoolean_t (*eglMakeCurrent)(EGLDisplay_t, EGLSurface_t, EGLSurface_t, EGLContext_t) = nullptr;
         EGLBoolean_t (*eglSwapBuffers)(EGLDisplay_t, EGLSurface_t) = nullptr;
