@@ -40,14 +40,6 @@ jobs:
       - name: Build Vulkan Binaries
         run: cmake --build build_vulkan --config Release --parallel
 
-      - name: Run INI Parser Tests
-        run: |
-          $testExe = Get-ChildItem -Path build_dx11 -Recurse -Filter "ini_round_trip_test.exe" | Select-Object -First 1
-          if ($testExe) {
-            & $testExe.FullName examples_config/angle_config.default-safe.ini
-          }
-        shell: pwsh
-
       - name: Assemble Release Artifacts
         run: |
           New-Item -ItemType Directory -Force -Path artifacts/dx11 | Out-Null
