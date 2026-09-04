@@ -9,12 +9,23 @@ All notable changes to ReviANGLE fork are documented in this file.
 
 ---
 
-## [1.2.1] - 2026-09-04
+## [1.2.2] - 2026-09-04
 
-### Added & Fixed in v1.2.1
+### Added & Fixed in v1.2.2
 - **Asynchronous Shader & Pipeline Cache**:
   - Upgraded `boost_shader_cache` with a zero-latency RAM lookup cache and background disk-writer thread (`std::thread` + `std::condition_variable`).
   - Eliminates all render-thread disk I/O hitches and micro-stutters when compiled ANGLE shaders/pipelines are persisted to disk during level play.
+- **Default Profile Smoothness & Stutter Fixes**:
+  - Disabled frame skipping (`present_skip_idle=false`) and dynamic resolution scaling (`halfres_render=false`) in DX11 backend default configuration.
+  - Cleaned up experimental rendering flags (`vbo_pool`, `instancing`, `atlas_merge`, `frustum_cull`, `smart_cpu_pin`) from default DX11 profiles, restoring 100% smooth frame delivery on decorated levels.
+- **Repository Maintenance**:
+  - Removed deprecated `ini_round_trip_test` utility, cleaned up CMake build targets, and updated CI/CD release workflow.
+
+---
+
+## [1.2.1] - 2026-09-04
+
+### Added & Fixed in v1.2.1
 - **ReviANGLE Studio Configurator Enhancements**:
   - **Visual Risk Warnings**: Added warning badge icons in the option list and warning banners in the description panel for risky or destructive options.
   - **Schema & Description Refresh**: Fully updated option descriptions, default values (`frame_pacing=false`, `frame_pacing_target=0`, `precise_sleep=false`, `low_latency=false`, `workingset_lock=false`), and added explicit performance warnings regarding DirectX 11 vs. Vulkan backend performance gap under Windows.
