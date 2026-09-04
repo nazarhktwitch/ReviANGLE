@@ -328,7 +328,7 @@ void EditorApp::renderOptionList() {
     // Warning badge if setting has risks
     if (o.warning_en && *o.warning_en) {
       ImGui::SameLine();
-      ImGui::TextColored(ImVec4(1.0f, 0.4f, 0.3f, 1.0f), "⚠️");
+      ImGui::TextColored(ImVec4(1.0f, 0.4f, 0.3f, 1.0f), "[RISK]");
       if (ImGui::IsItemHovered()) {
         ImGui::SetTooltip(
             "DANGEROUS / RISK: Check description panel for warnings");
@@ -455,7 +455,7 @@ void EditorApp::renderFooter() {
     ImGui::TextColored(ImVec4(0.95f, 0.75f, 0.30f, 1.0f),
                        "  ●  unsaved changes");
   } else if (!m_savedAt.empty()) {
-    ImGui::TextColored(ImVec4(0.55f, 0.85f, 0.55f, 1.0f), "  ✓  %s",
+    ImGui::TextColored(ImVec4(0.55f, 0.85f, 0.55f, 1.0f), "  [Saved]  %s",
                        m_savedAt.c_str());
   }
 
