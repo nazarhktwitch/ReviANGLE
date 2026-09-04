@@ -253,7 +253,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int) {
         0x2010, 0x205E, // General Punctuation (en-dash, em-dash, …)
         0x2122, 0x2122, // ™
         0x2190, 0x21FF, // Arrows (← → ↑ ↓ ↔ ▸ etc.)
-        0x2500, 0x257F, // Box Drawing (│ ┌ ┐ - etc.)
+        0x2500, 0x257F, // Box Drawing (│ ┌ ┐ ─ etc.)
         0x25A0, 0x25FF, // Geometric Shapes (● ◆ ▪ ◯ etc.)
         0x2713, 0x2717, // ✓ ✗
         0,
