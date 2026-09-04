@@ -21,6 +21,7 @@
 This is an **active fork** of the original [ReviANGLE](https://github.com/Reviusion/ReviANGLE) project with **simultaneous support for both DirectX 11 and Vulkan backends**. Maintained at [@nazarhktwitch/ReviANGLE](https://github.com/nazarhktwitch/ReviANGLE). The original repository remains monitored for upstream updates which will be integrated as they become available.
 
 **Key differences from the original:**
+- **In-Game Overlay Configurator**: Press **`Alt + Home`** in-game for real-time live parameter tuning without restarting.
 - **Vulkan backend** built from ANGLE source specifically for this project (custom DLL compilation)
 - **Mod Compatibility**: Restored legacy OpenGL 1.1 state exports & attribute stack for flawless overlay rendering
 - **Dual-backend support**: Choose DirectX 11 or Vulkan per build
@@ -172,6 +173,7 @@ This is a **third-party** modification. Use at your own risk. **Always back up y
 Это **активный форк** оригинального проекта [ReviANGLE](https://github.com/Reviusion/ReviANGLE) с **одновременной поддержкой обоих бэкендов: DirectX 11 и Vulkan**. Поддерживается на [@nazarhktwitch/ReviANGLE](https://github.com/nazarhktwitch/ReviANGLE). Оригинальный репозиторий отслеживается — обновления upstream будут интегрироваться по мере их выхода.
 
 **Ключевые отличия от оригинала:**
+- **Внутриигровой оверлей-конфигуратор**: Нажмите **`Alt + Home`** прямо в игре для настройки параметров в реальном времени без перезапуска
 - **Vulkan-бэкенд**, собранный из исходников ANGLE специально для этого проекта (кастомная компиляция DLL)
 - **Совместимость с модами**: Восстановлены экспорты функций и атрибутный стек legacy OpenGL 1.1 для безупречной отрисовки оверлеев
 - **Поддержка обоих бэкендов**: Выбор между DirectX 11 и Vulkan для каждой сборки
