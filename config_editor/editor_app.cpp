@@ -3,13 +3,11 @@
 #include "ini_parser.hpp"
 #include "schema.hpp"
 
-
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
 #include <ctime>
 #include <vector>
-
 
 // The Ini lives as a process-global so the EditorApp methods don't have to
 // pass it around - this is a small single-window app, no concurrency.
@@ -326,6 +324,16 @@ void EditorApp::renderOptionList() {
       m_selectedOptIdx = i;
     }
 
+    // Warning badge if setting has risks
+    if (o.warning_en && *o.warning_en) {
+      ImGui::SameLine();
+      ImGui::TextColored(ImVec4(1.0f, 0.4f, 0.3f, 1.0f), "⚠️");
+      if (ImGui::IsItemHovered()) {
+        ImGui::SetTooltip(
+            "DANGEROUS / RISK: Check description panel for warnings");
+      }
+    }
+
     ImGui::PopID();
   }
 
@@ -385,6 +393,18 @@ void EditorApp::renderDescriptionPanel() {
   }
   if (o.type == OptType::Enum && o.enum_values && *o.enum_values) {
     ImGui::TextDisabled("Choices: %s", o.enum_values);
+  }
+
+  if (o.warning_en && *o.warning_en) {
+    ImGui::Separator();
+    ImGui::TextColored(ImVec4(1.0f, 0.35f, 0.25f, 1.0f),
+                       "RISK WARNING / ПРЕДУПРЕЖДЕНИЕ:");
+    ImGui::PushTextWrapPos(0.0f);
+    ImGui::TextColored(ImVec4(1.0f, 0.65f, 0.45f, 1.0f), "EN: %s",
+                       o.warning_en);
+    ImGui::TextColored(ImVec4(1.0f, 0.65f, 0.45f, 1.0f), "RU: %s",
+                       o.warning_ru);
+    ImGui::PopTextWrapPos();
   }
 
   ImGui::Separator();

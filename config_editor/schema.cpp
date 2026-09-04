@@ -10,14 +10,20 @@
 static const OptionDef g_opts[] = {
 
     // ────────── [ANGLE] ─────────────────────────────────────────────────────
+    // ────────── [ANGLE] ─────────────────────────────────────────────────────
     {"ANGLE", "backend", OptType::Enum, "d3d11",
-     "ANGLE renderer backend. d3d11 is the verified default; vulkan routes "
-     "OpenGL through ANGLE's Vulkan renderer; d3d9 remains a legacy fallback "
-     "for older GPUs / drivers.",
-     "Renderer backend ANGLE. d3d11 - проверенный default; vulkan ведет OpenGL "
-     "через Vulkan renderer ANGLE; d3d9 остается legacy fallback для старых "
-     "GPU/драйверов.",
-     "ON", 0, 65535, "d3d11,d3d9,vulkan"},
+     "ANGLE renderer backend. d3d11 is recommended for maximum FPS and DXGI "
+     "Allow Tearing support; "
+     "vulkan routes OpenGL through ANGLE's Vulkan renderer; d3d9 remains a "
+     "legacy fallback.",
+     "Бэкенд рендера ANGLE. d3d11 рекомендуется на Windows для макс. FPS и "
+     "поддержки DXGI Allow Tearing; "
+     "vulkan ведет рендер через Vulkan; d3d9 - устаревший fallback.",
+     "ON", 0, 65535, "d3d11,d3d9,vulkan",
+     "On Windows, Vulkan backend lacks DXGI swap chains and incurs higher "
+     "translation overhead (~200-300 FPS lower than D3D11).",
+     "В Windows у Vulkan нет DXGI-цепочки кадров и выше оверхед трансляции "
+     "(~200-300 FPS меньше, чем D3D11)."},
     {"ANGLE", "debug", OptType::Bool, "false",
      "Persistent debug log file. One fopen for the process lifetime - no "
      "per-call hitches. Default OFF for production; flip ON only when "
@@ -55,14 +61,11 @@ static const OptionDef g_opts[] = {
      "Помогает когда фон жрёт CPU.",
      "ON"},
     {"Boost", "cpu_affinity", OptType::Hex, "0",
-     "CPU affinity mask in hex. 0 = let scheduler pick. With only 2 hardware "
-     "threads on Ivy Bridge, manual pinning is wasteful.",
-     "Маска CPU affinity (hex). 0 = автомат. На 2-поточном Ivy Bridge ручной "
-     "pin бесполезен.",
-     "ON"},
+     "CPU affinity mask in hex. 0 = let scheduler pick.",
+     "Маска CPU affinity (hex). 0 = автомат.", "ON"},
     {"Boost", "sse_math", OptType::Bool, "true",
-     "SSE2 fast math intrinsics. Ivy Bridge supports AVX, totally safe.",
-     "SSE2 fast-math инструкции. Ivy Bridge точно поддерживает.", "ON"},
+     "SSE2 fast math intrinsics. Safe on all x64 processors.",
+     "SSE2 fast-math инструкции. Безопасно на всех x64 процессорах.", "ON"},
     {"Boost", "power_boost", OptType::Bool, "true",
      "Disables Windows 10 PROCESS_POWER_THROTTLING (EcoQoS). Stops OS from "
      "downclocking GD when it thinks the app is idle.",
@@ -72,11 +75,13 @@ static const OptionDef g_opts[] = {
 
     // ────────── [BoostAdvanced] ─────────────────────────────────────────────
     {"BoostAdvanced", "tex_compress", OptType::Bool, "false",
-     "On-the-fly RGBA8 → DXT1 compression (4× less VRAM). Breaks rendering "
-     "on ANGLE FL9 path - keep OFF on this hardware.",
-     "Сжатие RGBA8 → DXT1 на лету (4× меньше VRAM). Ломает рендер на "
-     "FL9-пути ANGLE - НЕ ВКЛЮЧАЙ.",
-     "OFF - breaks textures on FL9 path"},
+     "On-the-fly RGBA8 → DXT1 compression (4× less VRAM). Breaks rendering on "
+     "many GPUs.",
+     "Сжатие RGBA8 → DXT1 на лету (4× меньше VRAM). Ломает рендер на многих "
+     "GPU.",
+     "OFF - breaks textures", 0, 65535, "",
+     "CAUTION: Compression breaks sprite transparency and distorts textures!",
+     "ВНИМАНИЕ: Сжатие разрушает прозрачность спрайтов и портят текстуры!"},
     {"BoostAdvanced", "nvapi_profile", OptType::Bool, "true",
      "NVAPI driver profile init - signals \"heavy GPU app, give me max perf\". "
      "Now correctly loads nvapi64.dll on x64 and uses void* return type "
@@ -305,22 +310,21 @@ static const OptionDef g_opts[] = {
      "DXGI waitable swap chain - ждёт на handle вместо блокировки в "
      "Present(). Гейчён по backend==d3d11.",
      "ON - D3D11 only"},
-    {"BoostLatency", "frame_pacing", OptType::Bool, "true",
-     "QPC-based frame pacing with sleep+spin loop. ON by default - paired "
-     "with target=180 it gives the best gameplay feel: lowest input lag, "
-     "smooth motion, no tearing. Set false only for raw FPS benchmarking.",
-     "Frame pacing через QPC с sleep+spin. ВКЛ по умолчанию - в паре с "
-     "target=180 даёт лучшее ощущение: минимальный input lag, "
-     "плавность, без tearing-а. ВЫКЛ только для бенчмарка max FPS.",
-     "ON - best feel preset"},
-    {"BoostLatency", "frame_pacing_target", OptType::Int, "180",
-     "Target FPS for QPC pacing. 180 = 2× refresh on a 90 Hz monitor - "
-     "the lowest-input-lag sweet spot. Set 0 for auto-detect (matches "
-     "refresh exactly), or 60/90 for VSync-style smoothness.",
-     "Целевой FPS пацера. 180 = 2× refresh на 90 Hz мониторе - лучший "
-     "баланс input lag. 0 = автоопределение (ровно по refresh), "
-     "60/90 = плавность VSync-стиля.",
-     "180 - 2× refresh on 90 Hz", 0, 1000},
+    {"BoostLatency", "frame_pacing", OptType::Bool, "false",
+     "QPC-based frame pacing with zero-CPU waitable timers. Keep false if "
+     "using FPS bypass / MegaHack to avoid conflicts.",
+     "Frame pacing на базе QPC с использованием высокоточных системных "
+     "таймеров (без загрузки CPU). Держите ВЫКЛ при использовании FPS bypass / "
+     "MegaHack.",
+     "OFF - default (0 = uncapped)"},
+    {"BoostLatency", "frame_pacing_target", OptType::Int, "0",
+     "Target FPS for QPC pacing. 0 = uncapped / disabled (recommended if using "
+     "MegaHack or FPS Bypass). Set to your monitor refresh rate (60/144/240) "
+     "if experiencing tearing.",
+     "Целевой FPS пацера. 0 = разблокирован / отключен (рекомендуется с "
+     "MegaHack/FPS Bypass). Задайте герцовку (60/144/240) при наличии разрывов "
+     "кадра.",
+     "0 - uncapped", 0, 1000},
     {"BoostLatency", "mmcss_pro_audio", OptType::Bool, "true",
      "Registers main thread as MMCSS Pro Audio class - gets 1 ms scheduling "
      "granularity (default is 15.6 ms quantum).",
@@ -332,21 +336,19 @@ static const OptionDef g_opts[] = {
      "compile errors; shader_cache covers warmup anyway.",
      "Предкомпиляция шейдеров при старте. ВЫКЛ - может падать; кеш на "
      "диске покрывает warmup.",
-     "OFF - crash-risky"},
-    {"BoostLatency", "low_latency", OptType::Bool, "true",
-     "IDXGIDevice1::SetMaximumFrameLatency(1) - reduces input lag by "
-     "~2 frames. Now hits correct vtable slot 12 (was slot 11 = "
-     "GetGPUThreadPriority(INT*) which crashed with 'write to 0x1').",
-     "IDXGIDevice1::SetMaximumFrameLatency(1) - снижает input lag на "
-     "~2 кадра. Чинено: slot 12 (раньше 11 = GetGPUThreadPriority, "
-     "крашило).",
-     "ON - verified MaxFrameLatency=1"},
+     "OFF - crash-risky", 0, 65535, "",
+     "RISK: Shader pre-compilation can cause startup crashes on some GPU "
+     "drivers!",
+     "РИСК: Предкомпиляция шейдеров может вызвать вылет игры при старте!"},
+    {"BoostLatency", "low_latency", OptType::Bool, "false",
+     "IDXGIDevice1::SetMaximumFrameLatency(1) - reduces input lag by ~2 "
+     "frames.",
+     "IDXGIDevice1::SetMaximumFrameLatency(1) - снижает input lag на ~2 кадра.",
+     "OFF - default"},
     {"BoostLatency", "gl_no_error", OptType::Bool, "true",
      "EGL_CONTEXT_OPENGL_NO_ERROR_KHR - disables ANGLE per-call validation. "
-     "~10-20% CPU saving on weak Ivy Bridge.",
-     "Контекст без валидации параметров GL. ~10-20% экономии CPU на "
-     "слабом Ivy Bridge.",
-     "ON - big win on weak CPU"},
+     "~10-20% CPU saving.",
+     "Контекст без валидации параметров GL. ~10-20% экономии CPU.", "ON"},
     {"BoostLatency", "unlock_fps_cap", OptType::Bool, "true",
      "Hooks CCApplication::setAnimationInterval to remove cocos2d FPS cap "
      "(sets 1/1000 = 1 ms). Re-applied every second.",
@@ -362,16 +364,16 @@ static const OptionDef g_opts[] = {
 
     // ────────── [BoostGD] ───────────────────────────────────────────────────
     {"BoostGD", "skip_intro", OptType::Bool, "false",
-     "Skip RobTop intro splash. OFF - file-loading hooks risk save "
-     "corruption; intro is short anyway.",
-     "Пропуск splash-экрана. ВЫКЛ - file-hook рискован для сейвов, "
-     "интро короткое.",
-     "OFF - risk to saves"},
+     "Skip RobTop intro splash. OFF by default.",
+     "Пропуск splash-экрана RobTop. ВЫКЛ по умолчанию.", "OFF - risk to saves",
+     0, 65535, "", "RISK: File-loading hooks risk corrupting save files!",
+     "РИСК: Хуки загрузки файлов могут повредить файлы сохранений!"},
     {"BoostGD", "object_pool", OptType::Bool, "false",
-     "Object pool for cocos2d nodes. OFF - vtable corruption risk on "
-     "CCNode subclasses.",
-     "Пул объектов для cocos2d-нод. ВЫКЛ - риск порчи vtable.",
-     "OFF - vtable corruption risk"},
+     "Object pool for cocos2d nodes.", "Пул объектов для cocos2d-нод.",
+     "OFF - vtable corruption risk", 0, 65535, "",
+     "RISK: Object pooling causes vtable corruption and crashes on complex "
+     "levels!",
+     "РИСК: Пул объектов вызывает порчу vtable и краши на сложных уровнях!"},
     {"BoostGD", "object_pool_size", OptType::Int, "4096",
      "Pool capacity when object_pool=true.",
      "Ёмкость пула когда object_pool=true.", "OFF - object_pool off", 256,

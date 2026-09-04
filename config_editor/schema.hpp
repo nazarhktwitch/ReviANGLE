@@ -24,6 +24,8 @@ struct OptionDef {
   // For OptType::Enum: comma-separated allowed values, e.g. "d3d11,d3d9".
   // Renders as an ImGui::Combo. Empty for non-enum types.
   const char *enum_values = "";
+  const char *warning_en = ""; // Optional safety warning for risky settings
+  const char *warning_ru = ""; // Опциональное предупреждение об опасности
 };
 
 // Returns the static schema. Order matches the grouping in angle_config.ini
