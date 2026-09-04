@@ -12,9 +12,12 @@ All notable changes to ReviANGLE fork are documented in this file.
 ## [1.2.1] - 2026-09-04
 
 ### Added & Fixed in v1.2.1
+- **Asynchronous Shader & Pipeline Cache**:
+  - Upgraded `boost_shader_cache` with a zero-latency RAM lookup cache and background disk-writer thread (`std::thread` + `std::condition_variable`).
+  - Eliminates all render-thread disk I/O hitches and micro-stutters when compiled ANGLE shaders/pipelines are persisted to disk during level play.
 - **ReviANGLE Studio Configurator Enhancements**:
   - **Visual Risk Warnings**: Added warning badge icons in the option list and warning banners in the description panel for risky or destructive options.
-  - **Schema & Description Refresh**: Fully updated option descriptions, default values (`frame_pacing=false`, `frame_pacing_target=0`, `precise_sleep=false`, `low_latency=false`), and added explicit performance warnings regarding DirectX 11 vs. Vulkan backend performance gap under Windows.
+  - **Schema & Description Refresh**: Fully updated option descriptions, default values (`frame_pacing=false`, `frame_pacing_target=0`, `precise_sleep=false`, `low_latency=false`, `workingset_lock=false`), and added explicit performance warnings regarding DirectX 11 vs. Vulkan backend performance gap under Windows.
 
 ---
 

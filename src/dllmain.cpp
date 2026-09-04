@@ -73,6 +73,7 @@ void apply();
 }
 namespace boost_shader_cache {
 void apply();
+void shutdown();
 }
 namespace boost_laa {
 void apply();
@@ -528,6 +529,7 @@ static void onDetach() {
   boost_obj_pool::shutdown();
   boost_level_predecode::shutdown();
   boost_frame_pacing::shutdown();
+  boost_shader_cache::shutdown();
   angle::shutdown();
 }
 
