@@ -9,6 +9,20 @@ All notable changes to ReviANGLE fork are documented in this file.
 
 ---
 
+## [1.4.0] - 2026-09-04
+
+### Added in v1.4.0
+- **Mini-Profiler & Stutter Histogram in Overlay**:
+  - Integrated real-time **Frame Time Histogram (`ImGui::PlotHistogram`)** into the overlay.
+  - Added **Stutter Tracker**: tracks peak frame time (ms) and detects frame drops, displaying color-coded status (`Smooth` vs `Stutters`).
+  - Included **Reset Profiler Stats** button to reset peak metrics during gameplay testing.
+- **RAM & Memory Optimizer**:
+  - Added **Trim RAM Working Set** tool inside the overlay to flush unneeded process memory pages and defragment Win32 C-runtime heap on demand.
+- **UI & ASCII Sanitization**:
+  - Replaced non-standard unicode characters in `gd-angle-editor.exe` and overlay buttons with ASCII badges (`[RISK]`, `[Saved]`, `Close`).
+
+---
+
 ## [1.3.0] - 2026-09-04
 
 ### Added in v1.3.0
