@@ -194,7 +194,7 @@ The full reference of every option in `angle_config.ini`. For interactive editin
 | `numa_aware` | bool | `true` | Bind to local NUMA node. No-op on single-NUMA. |
 | `huge_pages` | bool | `false` | 2 MB large pages. **Needs `SeLockMemoryPrivilege` (admin)**. |
 | `prefetcher_off` | bool | `false` | Disable Win Superfetch/Prefetcher. **Needs admin**. |
-| **`workingset_lock`** | **bool** | **`true`** | **Hard-pin min working set (`SetProcessWorkingSetSizeEx` + `QUOTA_LIMITS_HARDWS_MIN_ENABLE`). Anti-stutter on 8 GB systems.** |
+| **`workingset_lock`** | **bool** | **`false`** | **Hard-pin min working set (`SetProcessWorkingSetSizeEx`). Unnecessary on 64-bit GD.** |
 | **`gpu_thread_prio`** | **bool** | **`true`** | **`IDXGIDevice::SetGPUThreadPriority(+7)`. Boost driver's GPU command-list submission thread.** |
 | **`present_skip_idle`** | **bool** | **`false`** | **(opt-in) Skip `eglSwapBuffers` on frames with zero draw calls (idle menus, paused level). Cap of 4 consecutive skips bounds input latency. Saves GPU power on idle scenes.** |
 | **`halfres_render`** | **bool** | **`false`** | **(opt-in) Render entire game at half resolution (W/2 × H/2) to an offscreen FBO, upscale via `glBlitFramebuffer` + `GL_LINEAR` on Present. ~30-50% GPU savings on weak GPUs. Visible quality drop on UI text.** |

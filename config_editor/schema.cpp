@@ -636,15 +636,15 @@ static const OptionDef g_opts[] = {
      "Disable Windows Superfetch/Prefetcher for GD. OFF - needs admin.",
      "Отключение Superfetch/Prefetcher для GD. ВЫКЛ - нужен admin.",
      "OFF - admin required"},
-    {"BoostExtreme", "workingset_lock", OptType::Bool, "true",
+    {"BoostExtreme", "workingset_lock", OptType::Bool, "false",
      "Hard-pin minimum working set (SetProcessWorkingSetSizeEx + "
      "QUOTA_LIMITS_HARDWS_MIN_ENABLE). Stops Windows from paging our hot "
-     "pages out under RAM pressure (browser/IDE/Defender scan). Falls "
-     "back to a soft hint if SE_INC_WORKING_SET_NAME privilege denied.",
-     "Хард-фиксация минимального working set - Windows не сможет выгрузить "
-     "наши горячие страницы при нехватке RAM (браузер/IDE/Defender). Если "
-     "привилегия SE_INC_WORKING_SET_NAME недоступна - мягкий hint.",
-     "ON - anti-stutter on RAM-tight systems"},
+     "pages out under RAM pressure. OFF by default - unnecessary on 64-bit GD.",
+     "Хард-фиксация минимального working set. ВЫКЛ по умолчанию - больше не требуется на "
+     "64-битной версии GD (по умолчанию Windows сама хорошо управляет ОЗУ).",
+     "OFF - unneeded", 0, 65535, "",
+     "RISK: Locking too much memory can starve other apps and cause system instability!",
+     "РИСК: Блокировка памяти может привести к лагам системы и нехватке ОЗУ для других фоновых программ!"},
     {"BoostExtreme", "gpu_thread_prio", OptType::Bool, "true",
      "IDXGIDevice::SetGPUThreadPriority(+7). Bumps the user-mode driver's "
      "GPU command-list submission thread priority. Default is 0; range "
