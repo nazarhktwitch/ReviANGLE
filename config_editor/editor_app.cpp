@@ -160,28 +160,29 @@ void EditorApp::renderFrame() {
 
 void EditorApp::renderTopBar() {
   ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.10f, 0.10f, 0.12f, 1.0f));
-  ImGui::BeginChild("##topbar", ImVec2(0, 56), false);
-  ImGui::Dummy(ImVec2(12, 6));
-  ImGui::SameLine();
-  ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.95f, 1.0f), "ReviANGLE Studio");
-  ImGui::SameLine();
-  ImGui::Dummy(ImVec2(20, 0));
-  ImGui::SameLine();
-  ImGui::TextColored(
-      ImVec4(0.6f, 0.6f, 0.65f, 1.0f), "%s   |   %d options across %d sections",
-      m_iniPath.c_str(), (int)schemaAll().size(), (int)schemaSections().size());
+  ImGui::BeginChild("##topbar", ImVec2(0, 36), false);
 
-  // Search bar (right-aligned).
+  float topY = (36.0f - ImGui::GetFrameHeight()) * 0.5f;
+  ImGui::SetCursorPosY(topY);
+  ImGui::SetCursorPosX(10.0f);
+
   char buf[128];
   std::strncpy(buf, m_search.c_str(), sizeof(buf) - 1);
   buf[sizeof(buf) - 1] = '\0';
-  float searchW = 280.0f;
-  ImGui::SameLine(ImGui::GetWindowWidth() - searchW - 16);
+  float searchW = 300.0f;
   ImGui::SetNextItemWidth(searchW);
-  if (ImGui::InputTextWithHint("##search", "search options...", buf,
-                               sizeof(buf))) {
+  if (ImGui::InputTextWithHint("##search", "Search options...", buf, sizeof(buf))) {
     m_search = buf;
   }
+
+  if (!m_search.empty()) {
+    ImGui::SameLine();
+    ImGui::SetCursorPosY(topY);
+    if (ImGui::Button("Clear")) {
+      m_search.clear();
+    }
+  }
+
   ImGui::EndChild();
   ImGui::PopStyleColor();
 }
