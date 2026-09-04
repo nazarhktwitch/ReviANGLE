@@ -9,6 +9,15 @@ All notable changes to ReviANGLE fork are documented in this file.
 
 ---
 
+## [1.2.1] - 2026-09-04
+
+### Added & Fixed in v1.2.1
+- **ReviANGLE Studio Configurator Enhancements**:
+  - **Visual Risk Warnings**: Added warning badge icons in the option list and warning banners in the description panel for risky or destructive options.
+  - **Schema & Description Refresh**: Fully updated option descriptions, default values (`frame_pacing=false`, `frame_pacing_target=0`, `precise_sleep=false`, `low_latency=false`), and added explicit performance warnings regarding DirectX 11 vs. Vulkan backend performance gap under Windows.
+
+---
+
 ## [1.2.0] - 2026-09-04
 
 ### Added & Fixed in v1.2.0

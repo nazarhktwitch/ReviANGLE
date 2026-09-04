@@ -38,7 +38,7 @@ This is an **active fork** of the original [ReviANGLE](https://github.com/Revius
 ```powershell
 git clone https://github.com/nazarhktwitch/ReviANGLE.git
 cd ReviANGLE
-.\build_release.ps1 -Version "v1.2.0" # Change version if needed!
+.\build_release.ps1 -Version "v1.2.1" # Change version if needed!
 ```
 
 ### Manual CMake Commands
