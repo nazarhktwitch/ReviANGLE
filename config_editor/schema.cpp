@@ -9,8 +9,8 @@
 
 static const OptionDef g_opts[] = {
 
-    // ────────── [ANGLE] ─────────────────────────────────────────────────────
-    // ────────── [ANGLE] ─────────────────────────────────────────────────────
+    // ---------- [ANGLE] -----------------------------------------------------
+    // ---------- [ANGLE] -----------------------------------------------------
     {"ANGLE", "backend", OptType::Enum, "d3d11",
      "ANGLE renderer backend. d3d11 is recommended for maximum FPS and DXGI "
      "Allow Tearing support; "
@@ -36,7 +36,7 @@ static const OptionDef g_opts[] = {
      "Path to the debug log file (relative to GD.exe).",
      "Путь к отладочному логу (относительно GD.exe).", "ON"},
 
-    // ────────── [Boost] ─────────────────────────────────────────────────────
+    // ---------- [Boost] -----------------------------------------------------
     {"Boost", "gpu_forcer", OptType::Bool, "true",
      "Exports NvOptimusEnablement=1 / AmdPowerXpressRequest=1 - forces the "
      "discrete GPU on Optimus / switchable-graphics laptops.",
@@ -73,7 +73,7 @@ static const OptionDef g_opts[] = {
      "\"простое\". Стабилизирует FPS.",
      "ON"},
 
-    // ────────── [BoostAdvanced] ─────────────────────────────────────────────
+    // ---------- [BoostAdvanced] ---------------------------------------------
     {"BoostAdvanced", "tex_compress", OptType::Bool, "false",
      "On-the-fly RGBA8 → DXT1 compression (4× less VRAM). Breaks rendering on "
      "many GPUs.",
@@ -160,7 +160,7 @@ static const OptionDef g_opts[] = {
      "threading-ом ANGLE на D3D11.",
      "OFF - ANGLE conflict"},
 
-    // ────────── [BoostRender] ───────────────────────────────────────────────
+    // ---------- [BoostRender] -----------------------------------------------
     {"BoostRender", "depth_off", OptType::Bool, "false",
      "Disables depth test/clear. OFF - GD uses depth buffer for trigger "
      "ordering on certain levels.",
@@ -216,7 +216,7 @@ static const OptionDef g_opts[] = {
      "Целевой FPS для алгоритма dynamic resolution.",
      "OFF - dyn_resolution off", 30, 240},
 
-    // ────────── [BoostIO] ───────────────────────────────────────────────────
+    // ---------- [BoostIO] ---------------------------------------------------
     {"BoostIO", "fast_io", OptType::Bool, "true",
      "CreateFile with FILE_FLAG_SEQUENTIAL_SCAN. IAT hook target wasn't "
      "found on this build - harmless when missing.",
@@ -239,7 +239,7 @@ static const OptionDef g_opts[] = {
      "ре-резолвит одни и те же процы каждый кадр.",
      "ON"},
 
-    // ────────── [BoostCPU] ──────────────────────────────────────────────────
+    // ---------- [BoostCPU] --------------------------------------------------
     {"BoostCPU", "sse_memcpy", OptType::Bool, "false",
      "SSE2-optimized memcpy via IAT hook. OFF - hook crashes on some "
      "Windows runtimes (CRT version mismatch).",
@@ -269,7 +269,7 @@ static const OptionDef g_opts[] = {
      "Маленький бесплатный буст.",
      "ON"},
 
-    // ────────── [BoostSystem] ───────────────────────────────────────────────
+    // ---------- [BoostSystem] -----------------------------------------------
     {"BoostSystem", "wddm_priority", OptType::Bool, "true",
      "D3DKMTSetSchedulingPriorityClass(HIGH) - Windows gives our render "
      "commands priority over other apps.",
@@ -295,7 +295,7 @@ static const OptionDef g_opts[] = {
      "безопасности.",
      "OFF - security trade-off"},
 
-    // ────────── [BoostLatency] ──────────────────────────────────────────────
+    // ---------- [BoostLatency] ----------------------------------------------
     {"BoostLatency", "allow_tearing", OptType::Bool, "true",
      "DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING. Gated by isFlipModel(swapEffect) - "
      "safely no-ops when ANGLE picks the legacy BLIT swap chain on older "
@@ -362,7 +362,7 @@ static const OptionDef g_opts[] = {
      "Убирает hitch-и 0.5-2 ms от миграции между ядрами.",
      "ON"},
 
-    // ────────── [BoostGD] ───────────────────────────────────────────────────
+    // ---------- [BoostGD] ---------------------------------------------------
     {"BoostGD", "skip_intro", OptType::Bool, "false",
      "Skip RobTop intro splash. OFF by default.",
      "Пропуск splash-экрана RobTop. ВЫКЛ по умолчанию.", "OFF - risk to saves",
@@ -408,7 +408,7 @@ static const OptionDef g_opts[] = {
      "Количество decoder-потоков для level_predecode.",
      "OFF - level_predecode off", 1, 8},
 
-    // ────────── [BoostRenderAdv] ────────────────────────────────────────────
+    // ---------- [BoostRenderAdv] --------------------------------------------
     {"BoostRenderAdv", "atlas_merge", OptType::Bool, "false",
      "Merge texture atlases on the fly. OFF - UV remapping breaks textures "
      "in custom levels.",
@@ -451,7 +451,7 @@ static const OptionDef g_opts[] = {
      "Оптимизация blend-модов. ВЫКЛ - ломает fade и additive blend.",
      "OFF - breaks transparency"},
 
-    // ────────── [BoostCocos] ────────────────────────────────────────────────
+    // ---------- [BoostCocos] ------------------------------------------------
     {"BoostCocos", "particle_throttle", OptType::Bool, "false",
      "Limit max active particles. Visual change - your call. Set "
      "particle_max=150 if your level chokes.",
@@ -496,7 +496,7 @@ static const OptionDef g_opts[] = {
      "cocos2d.",
      "OFF - layout mismatch"},
 
-    // ────────── [BoostSysAdv] ───────────────────────────────────────────────
+    // ---------- [BoostSysAdv] -----------------------------------------------
     {"BoostSysAdv", "ftz_daz", OptType::Bool, "false",
      "FTZ/DAZ FPU flags (flush-to-zero / denormals-are-zero). OFF - "
      "changes float behavior, can affect physics timing.",
@@ -527,7 +527,7 @@ static const OptionDef g_opts[] = {
      "в глубокую рекурсию, риск переполнения.",
      "OFF - recursion crash risk"},
 
-    // ────────── [BoostPipeline] (all OFF - hot-path jitter) ────────────────
+    // ---------- [BoostPipeline] (all OFF - hot-path jitter) ----------------
     {"BoostPipeline", "pipe_drawsort", OptType::Bool, "false",
      "Pipeline-level drawcall sort. OFF - hot-path hook = jitter on "
      "2-core CPU.",
@@ -558,7 +558,7 @@ static const OptionDef g_opts[] = {
      "2-ядре.",
      "OFF - jitter on 2-core CPU"},
 
-    // ────────── [BoostNetwork] ──────────────────────────────────────────────
+    // ---------- [BoostNetwork] ----------------------------------------------
     {"BoostNetwork", "dns_prefetch", OptType::Bool, "true",
      "Pre-resolve GD server DNS at startup - hides 50-200 ms first-load "
      "latency.",
@@ -582,7 +582,7 @@ static const OptionDef g_opts[] = {
      "network traffic.",
      "TCP_NODELAY + 64 KB буферы. Быстрее на мелких пакетах.", "ON"},
 
-    // ────────── [BoostAudio] ────────────────────────────────────────────────
+    // ---------- [BoostAudio] ------------------------------------------------
     {"BoostAudio", "fmod_channel_limit", OptType::Bool, "false",
      "Limit FMOD active channels. OFF - can mute legitimate SFX.",
      "Лимит активных FMOD-каналов. ВЫКЛ - может глушить нужные SFX.",
@@ -609,7 +609,7 @@ static const OptionDef g_opts[] = {
      "RAM-компрессия аудио. ВЫКЛ - CPU-нагрузка, выгода минимальная.",
      "OFF - CPU cost > gain"},
 
-    // ────────── [BoostExtreme] ──────────────────────────────────────────────
+    // ---------- [BoostExtreme] ----------------------------------------------
     {"BoostExtreme", "etw_disable", OptType::Bool, "true",
      "Disable ETW event tracing for the process. Tiny but free win.",
      "Отключение ETW трассировки. Мелкий, но бесплатный буст.", "ON"},

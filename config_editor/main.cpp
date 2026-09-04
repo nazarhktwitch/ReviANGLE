@@ -13,13 +13,11 @@
 #include <tchar.h>
 #include <windows.h>
 
-
 #include "backends/imgui_impl_dx11.h"
 #include "backends/imgui_impl_win32.h"
 #include "imgui.h"
 
-
-// ─────────────── DX11 globals ────────────────────────────────────────────────
+// --------------- DX11 globals ------------------------------------------------
 static ID3D11Device *g_d3dDevice = nullptr;
 static ID3D11DeviceContext *g_d3dContext = nullptr;
 static IDXGISwapChain *g_swapChain = nullptr;
@@ -67,7 +65,7 @@ static LRESULT WINAPI wndProc(HWND hWnd, UINT msg, WPARAM wParam,
   return ::DefWindowProcW(hWnd, msg, wParam, lParam);
 }
 
-// ─────────────── DX11 helpers ────────────────────────────────────────────────
+// --------------- DX11 helpers ------------------------------------------------
 static bool createDevice(HWND hWnd) {
   DXGI_SWAP_CHAIN_DESC sd{};
   sd.BufferCount = 2;
@@ -139,7 +137,7 @@ static void cleanupRTV() {
   }
 }
 
-// ─────────────── INI path ────────────────────────────────────────────────────
+// --------------- INI path ----------------------------------------------------
 // Strategy: try angle_config.ini in the current working dir first; if it
 // doesn't exist, try alongside the editor exe itself; finally fall back to
 // the cwd path so the editor still saves there.
@@ -196,7 +194,7 @@ static void applyTheme() {
   c[ImGuiCol_Separator] = ImVec4(0.20f, 0.22f, 0.26f, 1.0f);
 }
 
-// ─────────────── Entry point ─────────────────────────────────────────────────
+// --------------- Entry point -------------------------------------------------
 int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int) {
   WNDCLASSEXW wc{};
   wc.cbSize = sizeof(wc);
@@ -255,7 +253,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int) {
         0x2010, 0x205E, // General Punctuation (en-dash, em-dash, …)
         0x2122, 0x2122, // ™
         0x2190, 0x21FF, // Arrows (← → ↑ ↓ ↔ ▸ etc.)
-        0x2500, 0x257F, // Box Drawing (│ ┌ ┐ ─ etc.)
+        0x2500, 0x257F, // Box Drawing (│ ┌ ┐ - etc.)
         0x25A0, 0x25FF, // Geometric Shapes (● ◆ ▪ ◯ etc.)
         0x2713, 0x2717, // ✓ ✗
         0,
