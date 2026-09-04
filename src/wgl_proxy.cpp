@@ -21,6 +21,9 @@ extern "C" void gdangle_invalidateProxyStateCaches();
 extern "C" unsigned long long gdangle_getDrawArraysCount();
 extern "C" unsigned long long gdangle_getDrawElementsCount();
 
+namespace boost_stutter_monitor {
+void onFrame();
+}
 // Frame pacing - declared in boost_frame_pacing.cpp
 namespace boost_frame_pacing {
 void prePresent();
@@ -493,6 +496,7 @@ BOOL WINAPI wgl_wglSwapBuffers(HDC hdc) {
   // since last frame, skip the actual eglSwapBuffers call.
   // In-Game Configurator Overlay
   boost_overlay::render(hdc);
+  boost_stutter_monitor::onFrame();
 
   BOOL ok;
   if (gdangle_shouldSkipPresent()) {

@@ -231,11 +231,16 @@ BOOL WINAPI wgl_wglShareLists(HGLRC a, HGLRC b) {
     return TRUE;
 }
 
+namespace boost_stutter_monitor {
+void onFrame();
+}
+
 BOOL WINAPI wgl_wglSwapBuffers(HDC hdc) {
     if (!t_vk_current) {
         return FALSE;
     }
 
+    boost_stutter_monitor::onFrame();
     vkproxy::VulkanState& vk = vkproxy::VulkanState::getInstance();
     return vk.presentFrame(t_vk_current) ? TRUE : FALSE;
 }
