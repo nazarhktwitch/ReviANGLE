@@ -56,7 +56,7 @@ To build both **DirectX 11** and **Vulkan** releases and package them into ZIP a
 .\build_release.ps1 -Version "vX.X.X" # Change "vX.X.X" to your desired version
 ```
 
-This generates `ReviANGLE-v1.1.0-DX11.zip` and `ReviANGLE-v1.1.0-Vulkan.zip` in the project root.
+This generates `ReviANGLE-vX.X.X-DX11.zip` and `ReviANGLE-vX.X.X-Vulkan.zip` in the project root.
 
 ---
 
@@ -140,6 +140,6 @@ CMake isn't on PATH. Either install [CMake](https://cmake.org/download/) or use 
 
 ## Continuous Integration & Automated Releases
 
-`.github/workflows/release.yml` automatically builds both **DirectX 11** and **Vulkan** release targets on every push to `main`/`dev` or when a version tag (e.g., `v1.1.0`) is pushed to GitHub.
+`.github/workflows/release.yml` automatically builds both **DirectX 11** and **Vulkan** release targets on every push to `main`/`dev` or when a version tag (e.g., `v1.2.0`) is pushed to GitHub.
 
 CI artifacts and GitHub Release ZIP packages are attached automatically to the release page.

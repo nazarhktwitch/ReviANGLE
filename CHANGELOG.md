@@ -9,6 +9,21 @@ All notable changes to ReviANGLE fork are documented in this file.
 
 ---
 
+## [1.2.0] - 2026-09-04
+
+### Added & Fixed in v1.2.0
+- **Frame Rate Stability & Micro-Stutter Fixes**:
+  - Disabled internal frame pacing conflicts by default (`frame_pacing_target = 0` treated as uncapped/disabled) to prevent fighting FPS bypass.
+  - Replaced CPU spin-wait loops in `boost_sleep.cpp` with zero-CPU high-resolution kernel waitable timers (`CREATE_WAITABLE_TIMER_HIGH_RESOLUTION`), eliminating 100% CPU core pinning on short sleep cycles.
+  - Balanced process and thread priorities from `TIME_CRITICAL` to `ABOVE_NORMAL` to prevent starving GPU driver command submission threads, DWM, and FMOD audio.
+- **Performance Defaults & Latency Optimization**:
+  - Updated all pre-tuned configuration files to use safe non-conflicting defaults (`allow_tearing=true`, `force_no_vsync=true`, `frame_pacing=false`, `precise_sleep=false`, `low_latency=false`).
+- **Windows DirectX 11 vs. Vulkan Performance Notice**:
+  - Added documentation and configuration notes explaining that **DirectX 11 (`backend=d3d11`) provides significantly higher peak FPS and lower input latency on Windows (especially NVIDIA GPUs)** compared to Vulkan.
+  - DirectX 11 supports hardware-level DXGI Allow Tearing (`DXGI_PRESENT_ALLOW_TEARING` + Flip Model), bypassing DWM frame queues with minimal CPU translation overhead. Vulkan lacks DXGI swap chains under Windows and incurs additional CPU command buffer translation costs in ANGLE, resulting in ~200-300+ FPS lower throughput at extreme uncapped frame rates.
+
+---
+
 ## [1.1.0] - 2026-09-03
 
 ### Added & Fixed in v1.1.0

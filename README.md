@@ -36,8 +36,8 @@ This is an **active fork** of the original [ReviANGLE](https://github.com/Revius
 ReviANGLE is a performance mod for **Geometry Dash 2.2** that replaces the game's `opengl32.dll` with a custom proxy. The proxy:
 
 1. **Translates OpenGL → DirectX 11 or Vulkan** via [Google ANGLE](https://chromium.googlesource.com/angle/angle) - pick the backend that suits your GPU:
-   - **DirectX 11** (default): Most compatible, works on older laptops, stable.
-   - **Vulkan**: Better performance on modern GPUs (GTX 1000+, RTX, Radeon RX series), requires recent driver updates.
+   - **DirectX 11** (recommended for max FPS): Most compatible, hardware DXGI Allow Tearing (Flip Model) support, highest peak FPS under Windows (especially NVIDIA GPUs).
+   - **Vulkan**: Modern low-level backend for Linux/Proton and modern GPUs. *Note: Under Windows, Vulkan lacks DXGI swap chains and incurs extra CPU translation overhead in ANGLE, resulting in ~200-300 FPS lower throughput at extreme uncapped frame rates compared to DirectX 11.*
 2. Adds **84 low-level performance modules** that hook into ANGLE's hot path:
    - GL state deduplication (skip 30-50 % of redundant cocos2d-x calls)
    - High-resolution frame pacing (no CPU spin)
@@ -185,8 +185,8 @@ This is a **third-party** modification. Use at your own risk. **Always back up y
 ReviANGLE — это мод производительности для **Geometry Dash 2.2**, который заменяет `opengl32.dll` игры на кастомный прокси. Прокси:
 
 1. **Транслирует OpenGL → DirectX 11 или Vulkan** через [Google ANGLE](https://chromium.googlesource.com/angle/angle) — выберите бэкенд, подходящий для вашей видеокарты:
-   - **DirectX 11** (по умолчанию): Максимально совместимый, работает на старых ноутбуках, стабильный.
-   - **Vulkan**: Лучшая производительность на современных видеокартах (серии GTX 1000+, RTX, Radeon RX), требует свежих драйверов.
+   - **DirectX 11** (рекомендуется для макс. FPS): Максимальная совместимость, аппаратный модуль DXGI Allow Tearing (Flip Model), наивысший пиковый FPS в Windows (особенно на видеокартах NVIDIA).
+   - **Vulkan**: Бэкенд для Linux/Proton и современных GPU. *Примечание: В Windows у Vulkan нет DXGI-цепочки кадра и выше CPU-оверхед трансляции ANGLE, из-за чего на экстремально высоком FPS он выдает на 200–300 FPS меньше, чем DirectX 11.*
 2. Добавляет **84 низкоуровневых модуля производительности**, встраиваемых в горячий путь ANGLE:
    - Дедупликация состояния GL (пропуск 30–50 % лишних вызовов cocos2d-x)
    - Высокоточный frame pacing (без загрузки CPU бессмысленными циклами)
