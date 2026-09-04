@@ -131,7 +131,9 @@ jobs:
             | **`ReviANGLE-${{ github.ref_name }}-DX11.zip`** | DirectX 11 | All GPUs (NVIDIA, AMD, Intel) | Maximum stability |
             | **`ReviANGLE-${{ github.ref_name }}-Vulkan.zip`** | Vulkan | Modern GPUs (RTX, Radeon RX, Intel Arc) | Vulkan API backend |
 
-            > **Note!** On Windows, Vulkan backend gives 200-300 FPS less than DX11 due to ANGLE translation overhead and lack of DXGI Flip Model support. Linux untested.
+            > **In-Game Overlay Configurator**: Press **`Alt + Home`** in-game for live real-time parameter tuning without restarting Geometry Dash!
+            >
+            > **Backend Note**: Performance depends on system configuration. DirectX 11 provides maximum peak throughput in uncapped benchmarks, while Vulkan bypasses DXGI overlay hook conflicts (often delivering smoother frame pacing without stutters).
 
             ---
 
