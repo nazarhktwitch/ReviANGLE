@@ -1,7 +1,7 @@
 #include "wgl_proxy.hpp"
 #include "angle_loader.hpp"
+#include "boost_overlay.hpp"
 #include "config.hpp"
-#include "wgl_proxy.hpp"
 #include <cstdio>
 #include <cstring>
 #include <mutex>
@@ -491,6 +491,9 @@ BOOL WINAPI wgl_wglSwapBuffers(HDC hdc) {
 
   // Present-skip: when present_skip_idle is enabled and no draws happened
   // since last frame, skip the actual eglSwapBuffers call.
+  // In-Game Configurator Overlay
+  boost_overlay::render(hdc);
+
   BOOL ok;
   if (gdangle_shouldSkipPresent()) {
     ok = TRUE; // synthesize success; driver retains previous frame

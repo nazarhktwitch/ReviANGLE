@@ -164,6 +164,12 @@ struct Config {
       false; // hard-pin min working set so OS can't page us out
   bool gpu_thread_prio = true; // IDXGIDevice::SetGPUThreadPriority(+7)
 
+  // HUD options
+  bool hud_enabled = true;
+  bool show_fps = true;
+  bool show_drawcalls = false;
+  bool show_frame_time = false;
+
   // Optional modules
   bool present_skip_idle = false;
 

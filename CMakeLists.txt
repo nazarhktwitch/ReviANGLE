@@ -169,6 +169,18 @@ set(SRC
     src/boost_drawcall_budget.cpp
     src/boost_iocp_loader.cpp
     src/boost_thread_qos.cpp
+
+    # in-game overlay
+    src/boost_overlay.cpp
+    config_editor/ini_parser.cpp
+
+    # ImGui sources for in-game overlay
+    config_editor/third_party/imgui/imgui.cpp
+    config_editor/third_party/imgui/imgui_draw.cpp
+    config_editor/third_party/imgui/imgui_tables.cpp
+    config_editor/third_party/imgui/imgui_widgets.cpp
+    config_editor/third_party/imgui/backends/imgui_impl_win32.cpp
+    config_editor/third_party/imgui/backends/imgui_impl_opengl3.cpp
 )
 
 # Conditional backend-specific sources
@@ -183,6 +195,9 @@ add_library(${OUT_NAME} SHARED ${SRC} src/gl_exports.def)
 target_include_directories(${OUT_NAME} PRIVATE
     src/
     angle/include/
+    config_editor/
+    config_editor/third_party/imgui/
+    config_editor/third_party/imgui/backends/
 )
 
 # Link libraries based on selected backend

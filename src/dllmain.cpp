@@ -520,6 +520,10 @@ void gdangle_postGLInit() {
   boost_batch_coalesce::apply();
 }
 
+namespace boost_overlay {
+void shutdown();
+}
+
 static void onDetach() {
   boost_timer::restore();
   boost_sleep::shutdown();
@@ -530,6 +534,7 @@ static void onDetach() {
   boost_level_predecode::shutdown();
   boost_frame_pacing::shutdown();
   boost_shader_cache::shutdown();
+  boost_overlay::shutdown();
   angle::shutdown();
 }
 

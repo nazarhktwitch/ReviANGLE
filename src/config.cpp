@@ -234,6 +234,11 @@ void Config::load(const char* path) {
             else if (key == "workingset_lock") workingset_lock = parseBool(val);
             else if (key == "gpu_thread_prio") gpu_thread_prio = parseBool(val);
             else if (key == "present_skip_idle") present_skip_idle = parseBool(val);
+        } else if (section == "HUD") {
+            if      (key == "enabled")         hud_enabled     = parseBool(val);
+            else if (key == "show_fps")        show_fps        = parseBool(val);
+            else if (key == "show_drawcalls")  show_drawcalls  = parseBool(val);
+            else if (key == "show_frame_time") show_frame_time = parseBool(val);
         } else if (section == "Megahack") {
             if      (key == "megahack_detected")        megahack_detected        = parseBool(val);
             else if (key == "mod_loader_detected")      mod_loader_detected      = parseBool(val);
