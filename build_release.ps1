@@ -1,6 +1,6 @@
 # Local Release Packaging Script for ReviANGLE
 param (
-    [string]$Version = "v1.2.1"
+    [string]$Version = "v1.2.2"
 )
 
 $ErrorActionPreference = "Stop"

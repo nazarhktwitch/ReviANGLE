@@ -137,6 +137,6 @@ CMake isn't on PATH. Either install [CMake](https://cmake.org/download/) or use 
 
 ## Continuous Integration & Automated Releases
 
-`.github/workflows/release.yml` automatically builds both **DirectX 11** and **Vulkan** release targets on every push to `main`/`dev` or when a version tag (e.g., `v1.2.0`) is pushed to GitHub.
+`.github/workflows/release.yml` automatically builds both **DirectX 11** and **Vulkan** release targets on every push to `main`/`dev` or when a version tag (e.g., `v1.2.3`) is pushed to GitHub.
 
 CI artifacts and GitHub Release ZIP packages are attached automatically to the release page.
