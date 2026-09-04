@@ -9,6 +9,19 @@ All notable changes to ReviANGLE fork are documented in this file.
 
 ---
 
+## [1.3.0] - 2026-09-04
+
+### Added in v1.3.0
+- **In-Game Configurator Overlay (Dear ImGui Integration)**:
+  - Built a non-intrusive in-game tuning overlay into `opengl32.dll`, toggled via **`Alt + Home`**.
+  - **Live Parameter Controls**: Real-time adjustment of particle limits, FPS capping, HUD visibility, GL state deduplication, mipmap skipping, MSAA toggling, and stutter monitoring without restarting Geometry Dash.
+  - **Input Suppression**: Installs a Win32 `WndProc` hook when visible to capture mouse clicks and keystrokes, preventing unintended in-game inputs while configuring options.
+  - **In-Memory INI Persistence**: Includes a `"Save Settings to angle_config.ini"` button that preserves comments and formatting when updating values.
+- **Standalone Configurator Maintained**:
+  - `gd-angle-editor.exe` remains untouched as a standalone desktop utility for full configuration and recovery.
+
+---
+
 ## [1.2.2] - 2026-09-04
 
 ### Added & Fixed in v1.2.2
