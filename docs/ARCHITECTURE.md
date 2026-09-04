@@ -21,7 +21,7 @@ This document explains how ReviANGLE works internally. Useful if you want to con
                                          │
                                          ▼
                             ┌────────────────────────┐
-                            │   d3d11.dll            │  ← Microsoft DirectX 11
+                            │ d3d11.dll/vulkan-1.dll │  ← Microsoft DirectX 11 / Vulkan
                             └────────────┬───────────┘
                                          │
                                          ▼
