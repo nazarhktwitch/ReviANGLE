@@ -62,7 +62,6 @@ build_dx11/ (or build_vulkan/)
 ├── dll/Release/
 │   ├── opengl32.dll              ← core proxy DLL
 │   ├── gd-angle-editor.exe       ← configurator
-│   └── ini_round_trip_test.exe   ← internal INI parser test
 └── bin/Release/
     └── ReviANGLE-Uninstall.exe   ← uninstaller
 ```

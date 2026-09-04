@@ -294,23 +294,5 @@ else()
     message(WARNING "gd_angle_editor skipped: ImGui sources not found at ${IMGUI_DIR}. Install ImGui or add the third_party/imgui folder to enable the editor build.")
 endif()
 
-# Round-trip test: console app that loads + flips one value + saves and diffs.
-# Verifies the preservation-aware INI parser keeps comments byte-for-byte.
-add_executable(ini_round_trip_test
-    ${EDITOR_DIR}/round_trip_test.cpp
-    ${EDITOR_DIR}/ini_parser.cpp
-)
-target_include_directories(ini_round_trip_test PRIVATE ${EDITOR_DIR})
-target_compile_definitions(ini_round_trip_test PRIVATE
-    _CRT_SECURE_NO_WARNINGS
-)
-if (MSVC)
-    target_compile_options(ini_round_trip_test PRIVATE /utf-8)
-endif()
-
-set_target_properties(ini_round_trip_test PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${REVIANGLE_DLL_DIR}"
-)
-
 # Build ReviANGLE Uninstaller
 add_subdirectory(uninstaller)

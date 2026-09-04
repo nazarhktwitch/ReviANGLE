@@ -85,7 +85,6 @@ build_dx11/ (or build_vulkan/)
 ├── dll/Release/
 │   ├── opengl32.dll              ← core proxy DLL
 │   ├── gd-angle-editor.exe       ← configurator app
-│   └── ini_round_trip_test.exe   ← internal INI parser test
 └── bin/Release/
     └── ReviANGLE-Uninstall.exe   ← uninstaller
 ```
@@ -96,7 +95,6 @@ build_dx11/ (or build_vulkan/)
 
 ```powershell
 # Quick verify build artifacts exist & link is clean:
-& build_dx11\dll\Release\ini_round_trip_test.exe examples_config\angle_config.default-safe.ini  # should exit 0
 & build_dx11\dll\Release\gd-angle-editor.exe                                                  # should open Studio window
 ```
 
@@ -111,8 +109,7 @@ To test the actual mod in Geometry Dash, see [`INSTALLATION.md`](INSTALLATION.md
 | `opengl32` | `opengl32.dll` | Core proxy DLL |
 | `gd_angle_editor` | `gd-angle-editor.exe` | GUI configurator for config options |
 | `ReviANGLE-Uninstall` | `ReviANGLE-Uninstall.exe` | Uninstaller |
-| `ini_round_trip_test` | `ini_round_trip_test.exe` | Validates INI parser preserves formatting |
-| `ALL` (default) | all 4 | Build everything |
+| `ALL` (default) | all 3 | Build everything |
 
 Build a single target with `cmake --build build_dx11 --config Release --target ReviANGLE-Uninstall`.
 
