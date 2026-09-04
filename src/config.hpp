@@ -35,7 +35,7 @@ struct Config {
   bool async_asset_loader = true;
   int async_loader_threads = 4;
   bool force_no_vsync = true;
-  bool precise_sleep = true;
+  bool precise_sleep = false; // off by default - prevents CPU spin-wait conflicts
   int heap_compact_interval = 30;
 
   // BoostRender
@@ -75,12 +75,12 @@ struct Config {
   // BoostLatency
   bool allow_tearing = true;
   bool waitable_swap = true;
-  bool frame_pacing = true;
+  bool frame_pacing = false; // off by default - lets GD / FPS bypass manage frame delivery without desync
   int frame_pacing_target =
-      0; // 0 = auto-detect monitor refresh; >0 = forced FPS cap
+      0; // 0 = uncapped; >0 = forced FPS cap; -1 = auto-detect monitor refresh
   bool mmcss_pro_audio = true;
   bool shader_warmup = false; // off by default - can crash on invalid shaders
-  bool low_latency = true;
+  bool low_latency = false; // off by default - prevents DXGI queue depth 1 backpressure stalls at 240+ FPS
   bool gl_no_error =
       true; // EGL_CONTEXT_OPENGL_NO_ERROR_KHR - kills per-call ANGLE validation
   bool anti_stutter = true; // disable affinity auto-update + EcoQoS thread

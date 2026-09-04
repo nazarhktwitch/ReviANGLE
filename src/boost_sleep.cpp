@@ -1,11 +1,15 @@
 // Boost: precise sleep
-// Replaces Windows Sleep() with a high-resolution spin-wait + WaitableTimer
-// for short durations. This eliminates the ~15ms jitter in frame pacing.
+// Replaces Windows Sleep() with a high-resolution WaitableTimer (0% CPU idle)
+// without burning CPU in spin loops or starving driver worker threads.
 
 #include <windows.h>
 #include "config.hpp"
 #include "common/iat_hook.hpp"
 #include "angle_loader.hpp"
+
+#ifndef CREATE_WAITABLE_TIMER_HIGH_RESOLUTION
+#define CREATE_WAITABLE_TIMER_HIGH_RESOLUTION 0x00000002
+#endif
 
 using SleepFn = void (WINAPI*)(DWORD);
 static SleepFn s_origSleep = nullptr;
@@ -13,32 +17,22 @@ static HANDLE  s_timer     = nullptr;
 
 static void WINAPI preciseSleep(DWORD ms) {
     if (ms == 0) {
-        SwitchToThread();
+        if (s_origSleep) s_origSleep(0);
+        else Sleep(0);
         return;
     }
 
-    if (ms <= 2) {
-        // spin wait using QPC for very short sleeps
-        LARGE_INTEGER freq, start, now;
-        QueryPerformanceFrequency(&freq);
-        QueryPerformanceCounter(&start);
-        double target = (double)ms * 0.001 * freq.QuadPart;
-        do {
-            SwitchToThread();
-            QueryPerformanceCounter(&now);
-        } while ((double)(now.QuadPart - start.QuadPart) < target);
-        return;
-    }
-
-    // for longer sleeps, use a waitable timer (1ms resolution with timeBeginPeriod)
     if (s_timer) {
         LARGE_INTEGER due;
         due.QuadPart = -(LONGLONG)ms * 10000LL;  // 100ns units, negative = relative
-        SetWaitableTimer(s_timer, &due, 0, nullptr, nullptr, FALSE);
-        WaitForSingleObject(s_timer, ms + 10);
-    } else {
-        if (s_origSleep) s_origSleep(ms);
+        if (SetWaitableTimer(s_timer, &due, 0, nullptr, nullptr, FALSE)) {
+            WaitForSingleObject(s_timer, ms + 50);
+            return;
+        }
     }
+
+    if (s_origSleep) s_origSleep(ms);
+    else Sleep(ms);
 }
 
 namespace boost_sleep {
@@ -46,11 +40,16 @@ namespace boost_sleep {
     void apply() {
         if (!Config::get().precise_sleep) return;
 
-        s_timer = CreateWaitableTimerA(nullptr, TRUE, nullptr);
+        // Try high-resolution waitable timer (Win10 1803+), fallback to standard auto-reset timer
+        s_timer = CreateWaitableTimerExW(nullptr, nullptr, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS);
+        if (!s_timer) {
+            s_timer = CreateWaitableTimerA(nullptr, FALSE, nullptr); // bManualReset = FALSE
+        }
+
         s_origSleep = (SleepFn)iat::hookInMainExe("kernel32.dll", "Sleep", (void*)preciseSleep);
 
         if (s_origSleep) {
-            angle::log("precise_sleep: active (IAT hooked Sleep)");
+            angle::log("precise_sleep: active (IAT hooked Sleep with waitable timer)");
         } else {
             angle::log("precise_sleep: IAT hook failed");
         }

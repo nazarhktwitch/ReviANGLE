@@ -42,23 +42,25 @@ static bool s_useHighRes = false;
 // ~100 µs late even with HIGH_RESOLUTION, so we still need a tight final spin.
 static constexpr double kSpinSlackSec = 0.0001;
 
-// Resolve target FPS: explicit config override > monitor refresh rate > 0.
+// Resolve target FPS: explicit target (>0) > explicit auto-detect (-1) > uncapped (0).
 static int detectTargetFps() {
   int explicitTarget = Config::get().frame_pacing_target;
   if (explicitTarget > 0) {
     angle::log("frame_pacing: explicit target = %d FPS", explicitTarget);
     return explicitTarget;
   }
-  DEVMODEA dm = {};
-  dm.dmSize = sizeof(dm);
-  if (EnumDisplaySettingsA(nullptr, ENUM_CURRENT_SETTINGS, &dm)) {
-    if (dm.dmDisplayFrequency > 1 && dm.dmDisplayFrequency < 1000) {
-      angle::log("frame_pacing: detected monitor refresh = %lu Hz",
-                 dm.dmDisplayFrequency);
-      return (int)dm.dmDisplayFrequency;
+  if (explicitTarget == -1) {
+    DEVMODEA dm = {};
+    dm.dmSize = sizeof(dm);
+    if (EnumDisplaySettingsA(nullptr, ENUM_CURRENT_SETTINGS, &dm)) {
+      if (dm.dmDisplayFrequency > 1 && dm.dmDisplayFrequency < 1000) {
+        angle::log("frame_pacing: detected monitor refresh = %lu Hz",
+                   dm.dmDisplayFrequency);
+        return (int)dm.dmDisplayFrequency;
+      }
     }
   }
-  angle::log("frame_pacing: could not detect refresh, no cap");
+  angle::log("frame_pacing: frame pacing target 0 (uncapped)");
   return 0;
 }
 

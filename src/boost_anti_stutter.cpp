@@ -118,11 +118,11 @@ void apply() {
   SetProcessPriorityBoost(GetCurrentProcess(), FALSE);
   SetThreadPriorityBoost(GetCurrentThread(), FALSE);
 
-  // 5. Aggressive anti-stutter: Process HIGH_PRIORITY_CLASS, Thread
-  // TIME_CRITICAL
-  SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
-  SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+  // 5. Balanced anti-stutter: Process ABOVE_NORMAL_PRIORITY_CLASS, Thread ABOVE_NORMAL
+  // Gives GD higher priority over background apps without starving GPU driver worker threads or DWM.
+  SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
+  SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
   angle::log(
-      "anti_stutter: aggressive mode (HIGH_PRIORITY_CLASS + TIME_CRITICAL)");
+      "anti_stutter: balanced mode (ABOVE_NORMAL_PRIORITY_CLASS + ABOVE_NORMAL)");
 }
 } // namespace boost_anti_stutter
