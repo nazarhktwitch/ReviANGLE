@@ -28,6 +28,12 @@ static std::chrono::steady_clock::time_point s_lastToggleTime;
 static std::string s_statusMessage = "";
 static std::chrono::steady_clock::time_point s_statusTime;
 
+static float s_frameTimes[120] = {};
+static int s_frameTimeIdx = 0;
+static float s_peakFrameTime = 0.0f;
+static int s_stutterCount = 0;
+static auto s_lastFrameClock = std::chrono::high_resolution_clock::now();
+
 // Win32 WndProc hook to capture mouse & keyboard input when overlay is visible
 static LRESULT CALLBACK Hooked_WndProc(HWND hwnd, UINT msg, WPARAM wParam,
                                        LPARAM lParam) {
@@ -202,14 +208,36 @@ void render(HDC hdc) {
     return;
   }
 
+  Config &cfg = Config::get();
+
+  // Calculate frame time for profiler
+  auto frameNow = std::chrono::high_resolution_clock::now();
+  float dtMs =
+      std::chrono::duration<float, std::milli>(frameNow - s_lastFrameClock)
+          .count();
+  s_lastFrameClock = frameNow;
+
+  if (dtMs > 0.01f && dtMs < 1000.0f) {
+    s_frameTimes[s_frameTimeIdx] = dtMs;
+    s_frameTimeIdx = (s_frameTimeIdx + 1) % 120;
+    if (dtMs > s_peakFrameTime) {
+      s_peakFrameTime = dtMs;
+    }
+    float targetThresholdMs =
+        (cfg.frame_pacing && cfg.frame_pacing_target > 0)
+            ? (1000.0f / (float)cfg.frame_pacing_target * 1.4f)
+            : 20.0f;
+    if (dtMs > targetThresholdMs) {
+      s_stutterCount++;
+    }
+  }
+
   // Start Frame
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplWin32_NewFrame();
   ImGui::NewFrame();
 
-  Config &cfg = Config::get();
-
-  ImGui::SetNextWindowSize(ImVec2(520, 480), ImGuiCond_FirstUseEver);
+  ImGui::SetNextWindowSize(ImVec2(540, 520), ImGuiCond_FirstUseEver);
   ImGui::SetNextWindowPos(ImVec2(60, 60), ImGuiCond_FirstUseEver);
 
   if (ImGui::Begin("ReviANGLE Studio (In-Game Configurator)", nullptr,
@@ -252,8 +280,34 @@ void render(HDC hdc) {
       ImGui::Checkbox("Disable MSAA / Anti-Aliasing", &cfg.disable_aa);
     }
 
-    if (ImGui::CollapsingHeader("Stutter Monitor")) {
+    if (ImGui::CollapsingHeader("Stutter Monitor & Mini-Profiler",
+                                ImGuiTreeNodeFlags_DefaultOpen)) {
       ImGui::Checkbox("Enable Stutter Monitor Logging", &cfg.stutter_monitor);
+      ImGui::PlotHistogram("Frame Time (ms)", s_frameTimes, 120, s_frameTimeIdx,
+                           nullptr, 0.0f, 33.3f, ImVec2(0, 70));
+      ImGui::Text("Peak Frame Time: %.2f ms", s_peakFrameTime);
+      ImGui::SameLine();
+      if (s_stutterCount > 0) {
+        ImGui::TextColored(ImVec4(1.0f, 0.4f, 0.4f, 1.0f), "  Stutters: %d",
+                           s_stutterCount);
+      } else {
+        ImGui::TextColored(ImVec4(0.4f, 0.9f, 0.4f, 1.0f),
+                           "  Stutters: 0 (Smooth)");
+      }
+      if (ImGui::Button("Reset Profiler Stats")) {
+        s_peakFrameTime = 0.0f;
+        s_stutterCount = 0;
+      }
+    }
+
+    if (ImGui::CollapsingHeader("RAM & Memory Optimizer")) {
+      ImGui::Text("Free unneeded process memory and trim system working set.");
+      if (ImGui::Button("Trim RAM Working Set", ImVec2(220, 28))) {
+        SetProcessWorkingSetSize(GetCurrentProcess(), (SIZE_T)-1, (SIZE_T)-1);
+        HeapCompact(GetProcessHeap(), 0);
+        s_statusMessage = "RAM Working Set successfully trimmed!";
+        s_statusTime = std::chrono::steady_clock::now();
+      }
     }
 
     ImGui::Spacing();
@@ -264,7 +318,7 @@ void render(HDC hdc) {
       saveCurrentSettingsToDisk();
     }
     ImGui::SameLine();
-    if (ImGui::Button("Close (Alt + Home)", ImVec2(160, 32))) {
+    if (ImGui::Button("Close", ImVec2(160, 32))) {
       s_visible.store(false, std::memory_order_relaxed);
     }
 
