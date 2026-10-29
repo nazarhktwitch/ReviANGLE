@@ -89,8 +89,6 @@ Geometry Dash/
 └── ReviANGLE-Uninstall.exe   ← Uninstaller
 ```
 
-4. Launch GD. If everything works, `angle_log.txt` will appear next to the `.exe`.
-
 **Cannot decide which one?** Start with **DirectX 11** - it's the most stable. If you have an RTX or modern Radeon GPU and want max performance, try Vulkan.
 
 #### Linux & Steam Deck (Proton / Wine)
@@ -239,7 +237,7 @@ Geometry Dash/
 └── ReviANGLE-Uninstall.exe   ← деинсталлятор
 ```
 
-4. Запустите GD. Если всё работает правильно, рядом с `.exe` появится файл `angle_log.txt`.
+4. Запустите GD.
 
 **Не можете определиться?** Начните с **DirectX 11** - это самый стабильный вариант по умолчанию. Если у вас RTX или современная видеокарта Radeon и вы хотите максимальную производительность, попробуйте Vulkan.
 
